@@ -8,10 +8,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author DDF
- */
 public class TimetableUI extends javax.swing.JFrame {
 
     /**
@@ -29,6 +25,14 @@ public class TimetableUI extends javax.swing.JFrame {
         populateRoomComboBox();
         populateTimeSlotStartComboBox();
         populateTimeSlotEndComboBox();
+    }
+    
+    public void updateUI()
+    {
+        String[] items = {"Group 1", "Group 2", "Group 3"};
+        // modify existent method to receive a parameter
+        // populateGroupComboBox(items);
+        // updateUI should be called when required (button is pressed, combobox item is selected)
     }
     
     public void populateTable()
