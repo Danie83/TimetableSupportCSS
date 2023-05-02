@@ -5,13 +5,15 @@
 
 package com.css.timetable;
 
-import javax.swing.JFrame;
-import com.css.timetable.JDBCConnection;
 import java.sql.SQLException;
+import javax.swing.JFrame;
 public class Timetable {
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        JDBCConnection con = JDBCConnection.getInstance();
+    public static void main(String[] args) throws SQLException {
+        
+        JDBCConnection conn = JDBCConnection.getInstance();
+        ConfigReader.getProperties();
+        
         JFrame frame = new TimetableUI();
         frame.setVisible(true);
     }

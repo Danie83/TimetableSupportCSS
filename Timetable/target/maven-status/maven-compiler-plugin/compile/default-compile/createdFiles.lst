@@ -1,3 +1,9 @@
-com\css\timetable\TimetableUI$1.class
-com\css\timetable\Timetable.class
+com\css\timetable\TimetableUI$3.class
 com\css\timetable\TimetableUI.class
+com\css\timetable\ConfigReader.class
+com\css\timetable\TimetableUI$4.class
+com\css\timetable\Timetable.class
+com\css\timetable\TimetableUI$2.class
+com\css\timetable\TimetableUI$5.class
+com\css\timetable\TimetableUI$1.class
+com\css\timetable\JDBCConnection.class
