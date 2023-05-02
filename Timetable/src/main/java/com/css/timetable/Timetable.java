@@ -6,13 +6,17 @@
 package com.css.timetable;
 
 import java.sql.SQLException;
+import java.util.Properties;
 import javax.swing.JFrame;
 public class Timetable {
 
     public static void main(String[] args) throws SQLException {
         
         JDBCConnection conn = JDBCConnection.getInstance();
-        ConfigReader.getProperties();
+        ConfigReader cr = ConfigReader.getInstance();
+        Properties p = cr.getProperties();
+        System.out.println(p.getProperty("database.url"));
+        System.out.println(cr.getProperty("database.url"));
         
         JFrame frame = new TimetableUI();
         frame.setVisible(true);
