@@ -4,7 +4,15 @@
  */
 package com.css.timetable;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,7 +34,14 @@ public class TimetableUI extends javax.swing.JFrame {
         populateTimeSlotStartComboBox();
         populateTimeSlotEndComboBox();
         
-        String[] yearItems = {"1", "2", "3"};
+        ConfigReader config = ConfigReader.getInstance();
+        
+        int years = Integer.parseInt(config.getProperty("setup.groups.years"));
+        String[] yearItems = new String[years];
+        for (int i = 0; i < years; i++) {
+            yearItems[i] = Integer.toString(i+1);
+        }
+        
         populateYearComboBox(yearItems);
         String[] dayItems = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         populateDayComboBox(dayItems);
@@ -60,23 +75,96 @@ public class TimetableUI extends javax.swing.JFrame {
     
     public void populateGroupComboBox()
     {
-        String[] items = {"Group 1", "Group 2", "Group 3"};
-        DefaultComboBoxModel model = new DefaultComboBoxModel(items);
-        groupComboBox.setModel(model);
+        int groupNumber = 0;
+        int i = 0;
+        try
+        {
+          Connection conn = JDBCConnection.getInstance().getConnection();
+          Statement stmt = conn.createStatement();
+          ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
+          while(rs.next()){
+            groupNumber = rs.getInt("total");
+          }
+          
+          String[] groupItems = new String[groupNumber];
+          stmt = conn.createStatement();
+          rs = stmt.executeQuery("SELECT name FROM groups;");
+          while(rs.next()){
+             groupItems[i] = new String(rs.getString("name"));
+             i++;
+          }
+          
+          DefaultComboBoxModel model = new DefaultComboBoxModel(groupItems);
+          groupComboBox.setModel(model);
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void populateTeacherComboBox()
     {
-        String[] items = {"Teacher 1", "Teacher 2", "Teacher 3"};
-        DefaultComboBoxModel model = new DefaultComboBoxModel(items);
-        teacherComboBox.setModel(model);
+        int teachersNumber = 0;
+        String items[];
+        try
+        {
+          Connection conn = JDBCConnection.getInstance().getConnection();
+          Statement stmt = conn.createStatement();
+          ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM teachers;");
+          while(rs.next()){
+            teachersNumber = rs.getInt("total");
+          }
+          
+          items = new String[teachersNumber];
+          int i = 0;
+          stmt = conn.createStatement();
+          rs = stmt.executeQuery("SELECT last_name, first_name FROM teachers;");
+          while(rs.next()){
+            String last_name = rs.getString("last_name");
+            String first_name = rs.getString("first_name");
+            items[i] = new StringBuilder().append(last_name).append(" ").append(first_name).toString();
+            i++;
+          }
+          //System.out.println(Arrays.toString(items));
+          
+          DefaultComboBoxModel model = new DefaultComboBoxModel(items);
+          teacherComboBox.setModel(model);
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void populateDisciplineComboBox()
     {
-        String[] items = {"Discipline 1", "Discipline 2", "Discipline 3"};
-        DefaultComboBoxModel model = new DefaultComboBoxModel(items);
-        disciplineComboBox.setModel(model);
+        int disciplineNumber = 0;
+        String items[];
+        try
+        {
+          Connection conn = JDBCConnection.getInstance().getConnection();
+          Statement stmt = conn.createStatement();
+          ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM discipline;");
+          while(rs.next()){
+            disciplineNumber = rs.getInt("total");
+          }
+          
+          items = new String[disciplineNumber];
+          int i = 0;
+          stmt = conn.createStatement();
+          rs = stmt.executeQuery("SELECT name FROM discipline;");
+          while(rs.next()){
+            String name = rs.getString("name");
+            items[i] = new StringBuilder().append(name).toString();
+            i++;
+          }
+          System.out.println(Arrays.toString(items));
+          
+          DefaultComboBoxModel model = new DefaultComboBoxModel(items);
+          disciplineComboBox.setModel(model);
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void populateClassComboBox()
@@ -88,9 +176,34 @@ public class TimetableUI extends javax.swing.JFrame {
     
     public void populateRoomComboBox()
     {
-        String[] items = {"Room 1", "Room 2", "Room 3"};
-        DefaultComboBoxModel model = new DefaultComboBoxModel(items);
-        roomComboBox.setModel(model);
+        int roomsNumber = 0;
+        String items[];
+        try
+        {
+          Connection conn = JDBCConnection.getInstance().getConnection();
+          Statement stmt = conn.createStatement();
+          ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM rooms;");
+          while(rs.next()){
+            roomsNumber = rs.getInt("total");
+          }
+          
+          items = new String[roomsNumber];
+          int i = 0;
+          stmt = conn.createStatement();
+          rs = stmt.executeQuery("SELECT name FROM rooms;");
+          while(rs.next()){
+            String name = rs.getString("name");
+            items[i] = new StringBuilder().append(name).toString();
+            i++;
+          }
+          System.out.println(Arrays.toString(items));
+          
+          DefaultComboBoxModel model = new DefaultComboBoxModel(items);
+          roomComboBox.setModel(model);
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void populateTimeSlotStartComboBox()
@@ -398,7 +511,9 @@ public class TimetableUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void timeSlotStartComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeSlotStartComboBoxActionPerformed
-        // TODO add your handling code here:
+        JComboBox<String> comboBox = (JComboBox<String>) evt.getSource();
+        int selectedHour = Integer.parseInt((String)comboBox.getSelectedItem());
+        
     }//GEN-LAST:event_timeSlotStartComboBoxActionPerformed
 
     /**
