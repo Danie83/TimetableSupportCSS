@@ -28,7 +28,6 @@ public class TimetableUI extends javax.swing.JFrame {
         super("Timetable UI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initComponents();
-        populateTable();
         populateGroupComboBox();
         populateTeacherComboBox();
         populateClassComboBox();
@@ -38,6 +37,9 @@ public class TimetableUI extends javax.swing.JFrame {
         
         updateDisciplineComboBox();
         updateTeacherComboBox();
+        updateYearComboBox();
+        
+        populateTable();
         
         ConfigReader config = ConfigReader.getInstance();
         
@@ -62,17 +64,38 @@ public class TimetableUI extends javax.swing.JFrame {
     
     public void populateTable()
     {
-        String columns[] = {"From - To", "Group", "Discipline", "Type", "Teacher", "Room"};
-        String data[][] = {
-            {"16-18", "3B3", "css", "curs", "tt", "c3"},
-            {"16-18", "3B3", "css", "curs", "ttt", "c2"},
-            {"16-18", "3B3", "css", "curs", "ttt", "c1"},
-            {"16-18", "3B3", "css", "curs", "tt", "c4"},
-            {"16-18", "3B3", "css", "curs", "tt", "c5"},
-            {"16-18", "3B3", "css", "curs", "tt", "c6"},
-            {"16-18", "3B3", "css", "curs", "tt", "c7"},
-            {"16-18", "3B3", "css", "curs", "tt", "c8"}
-        };
+        String columns[] = {"From - To", "Group", "Discipline", "Type", "Teacher", "Day", "Room"};
+        String group = (String) groupComboBox.getSelectedItem();
+        String sql = "SELECT * FROM timetable WHERE group_name = ?;";
+        List<String[]> timetable = new ArrayList<>();
+        try 
+        {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+            ptmt.setString(1, group);
+            ResultSet rs = ptmt.executeQuery();
+            while (rs.next())
+            {
+                int i = 0;
+                String[] item = new String[columns.length];
+                item[i++] = new StringBuilder().append(rs.getInt("start_hour")).append(" - ").append(rs.getInt("end_hour")).toString();
+                item[i++] = rs.getString("group_name");
+                item[i++] = rs.getString("course");
+                item[i++] = rs.getString("course_type");
+                item[i++] = rs.getString("teacher");
+                item[i++] = rs.getString("day");
+                item[i++] = rs.getString("room");
+                timetable.add(item);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        String[][] data = new String[timetable.size()][];
+        for (int j = 0; j < timetable.size(); j++)
+        {
+            data[j] = timetable.get(j);
+        }
         
         DefaultTableModel model = new DefaultTableModel(data, columns);
         jTable1.setModel(model);
@@ -161,7 +184,6 @@ public class TimetableUI extends javax.swing.JFrame {
             }
             
             String[] finalItems = items.toArray(new String[items.size()]);
-            System.out.println(Arrays.toString(finalItems));
             DefaultComboBoxModel model = new DefaultComboBoxModel(finalItems);
             teacherComboBox.setModel(model);
         }
@@ -193,7 +215,6 @@ public class TimetableUI extends javax.swing.JFrame {
             items[i] = new StringBuilder().append(name).toString();
             i++;
           }
-          System.out.println(Arrays.toString(items));
           
           DefaultComboBoxModel model = new DefaultComboBoxModel(items);
           disciplineComboBox.setModel(model);
@@ -234,8 +255,6 @@ public class TimetableUI extends javax.swing.JFrame {
         {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        updateTeacherComboBox();
     }
     
     public void populateClassComboBox()
@@ -267,7 +286,6 @@ public class TimetableUI extends javax.swing.JFrame {
             items[i] = new StringBuilder().append(name).toString();
             i++;
           }
-          System.out.println(Arrays.toString(items));
           
           DefaultComboBoxModel model = new DefaultComboBoxModel(items);
           roomComboBox.setModel(model);
@@ -325,6 +343,16 @@ public class TimetableUI extends javax.swing.JFrame {
         yearComboBox.setModel(model);
     }
     
+    public void updateYearComboBox()
+    {
+        String selectedGroup = (String) groupComboBox.getSelectedItem();
+        String[] items = new String[1];
+        
+        items[0] = Character.toString(selectedGroup.toCharArray()[0]);
+        
+        yearComboBox.setSelectedItem(items[0]);
+    }
+    
     public void populateDayComboBox(String[] items)
     {
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
@@ -344,7 +372,7 @@ public class TimetableUI extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        submitButon = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
@@ -386,10 +414,10 @@ public class TimetableUI extends javax.swing.JFrame {
 
         jLabel9.setText("Actions:");
 
-        jButton1.setText("Submit");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        submitButon.setText("Submit");
+        submitButon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                submitButonActionPerformed(evt);
             }
         });
 
@@ -560,7 +588,7 @@ public class TimetableUI extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)
+                                .addComponent(submitButon)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton2))
                             .addComponent(jLabel10)
@@ -582,7 +610,7 @@ public class TimetableUI extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel9)
-                            .addComponent(jButton1)
+                            .addComponent(submitButon)
                             .addComponent(jButton2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel10)
@@ -604,11 +632,39 @@ public class TimetableUI extends javax.swing.JFrame {
 
     private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupComboBoxActionPerformed
         updateDisciplineComboBox();
+        updateTeacherComboBox();
+        updateYearComboBox();
+        populateTable();
     }//GEN-LAST:event_groupComboBoxActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void submitButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButonActionPerformed
+        int startHour = Integer.parseInt((String) timeSlotStartComboBox.getSelectedItem());
+        int endHour = Integer.parseInt((String) timeSlotEndComboBox.getSelectedItem());
+        String group = (String) groupComboBox.getSelectedItem();
+        String discipline = (String) disciplineComboBox.getSelectedItem();
+        String type = (String) classComboBox.getSelectedItem();
+        String teacher = (String) teacherComboBox.getSelectedItem();
+        String room = (String) roomComboBox.getSelectedItem();
+        String day = (String) dayComboBox.getSelectedItem();
+        
+        try
+        {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            try (PreparedStatement ptmt = conn.prepareStatement("INSERT INTO timetable (room, start_hour, end_hour, day, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);")) {
+                ptmt.setString(1, room);
+                ptmt.setInt(2, startHour);
+                ptmt.setInt(3, endHour);
+                ptmt.setString(4, day);
+                ptmt.setString(5, discipline);
+                ptmt.setString(6, type);
+                ptmt.setString(7, group);
+                ptmt.setString(8, teacher);
+                ptmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_submitButonActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
@@ -666,7 +722,6 @@ public class TimetableUI extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> dayComboBox;
     private javax.swing.JComboBox<String> disciplineComboBox;
     private javax.swing.JComboBox<String> groupComboBox;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -687,6 +742,7 @@ public class TimetableUI extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JComboBox<String> roomComboBox;
+    private javax.swing.JButton submitButon;
     private javax.swing.JComboBox<String> teacherComboBox;
     private javax.swing.JComboBox<String> timeSlotEndComboBox;
     private javax.swing.JComboBox<String> timeSlotStartComboBox;
