@@ -1,10 +1,14 @@
-com\css\timetable\TimetableUI$3.class
 com\css\timetable\TimetableUI.class
 com\css\timetable\TimetableUI$6.class
+com\css\timetable\TimetableUI$7.class
+com\css\timetable\RegistrationTimetable.class
+com\css\timetable\TimetableUI$8.class
+com\css\timetable\TimetableUI$3.class
 com\css\timetable\ConfigReader.class
 com\css\timetable\TimetableUI$4.class
 com\css\timetable\Timetable.class
 com\css\timetable\TimetableUI$2.class
+com\css\timetable\export\ExportTimetable.class
 com\css\timetable\setup\DatabaseSetup.class
 com\css\timetable\TimetableUI$5.class
 com\css\timetable\TimetableUI$1.class

@@ -21,6 +21,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 public class TimetableUI extends javax.swing.JFrame {
+
     /**
      * Creates new form TimetableUI
      */
@@ -34,22 +35,22 @@ public class TimetableUI extends javax.swing.JFrame {
         populateRoomComboBox();
         populateTimeSlotStartComboBox();
         populateTimeSlotEndComboBox();
-        
+
         updateDisciplineComboBox();
         updateTeacherComboBox();
         updateYearComboBox();
         updateRoomComboBox();
-        
+
         populateTable();
-        
+
         ConfigReader config = ConfigReader.getInstance();
-        
+
         int years = Integer.parseInt(config.getProperty("setup.groups.years"));
         String[] yearItems = new String[years];
         for (int i = 0; i < years; i++) {
-            yearItems[i] = Integer.toString(i+1);
+            yearItems[i] = Integer.toString(i + 1);
         }
-        
+
         populateYearComboBox(yearItems);
         String[] dayItems = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         populateDayComboBox(dayItems);
@@ -57,29 +58,25 @@ public class TimetableUI extends javax.swing.JFrame {
         jTextArea1.setLineWrap(true);
         jTextArea1.setWrapStyleWord(true);
     }
-    
-    public void updateUI()
-    {
+
+    public void updateUI() {
         String[] items = {"Group 1", "Group 2", "Group 3"};
         // modify existent method to receive a parameter
         // populateGroupComboBox(items);
         // updateUI should be called when required (button is pressed, combobox item is selected)
     }
-    
-    public void populateTable()
-    {
+
+    public void populateTable() {
         String columns[] = {"id", "From - To", "Group", "Discipline", "Type", "Teacher", "Day", "Room"};
         String group = (String) groupComboBox.getSelectedItem();
         String sql = "SELECT * FROM timetable WHERE group_name = ?;";
         List<String[]> timetable = new ArrayList<>();
-        try 
-        {
+        try {
             Connection conn = JDBCConnection.getInstance().getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setString(1, group);
             ResultSet rs = ptmt.executeQuery();
-            while (rs.next())
-            {
+            while (rs.next()) {
                 int i = 0;
                 String[] item = new String[columns.length];
                 item[i++] = String.valueOf(rs.getInt("id"));
@@ -95,13 +92,12 @@ public class TimetableUI extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         String[][] data = new String[timetable.size()][];
-        for (int j = 0; j < timetable.size(); j++)
-        {
+        for (int j = 0; j < timetable.size(); j++) {
             data[j] = timetable.get(j);
         }
-        
+
         DefaultTableModel model = new DefaultTableModel(data, columns);
         jTable1.setModel(model);
         jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -111,216 +107,190 @@ public class TimetableUI extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(0).setResizable(false);
 
     }
-    
-    public void populateGroupComboBox()
-    {
+
+    public void populateGroupComboBox() {
         int groupNumber = 0;
         int i = 0;
-        try
-        {
-          Connection conn = JDBCConnection.getInstance().getConnection();
-          Statement stmt = conn.createStatement();
-          ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
-          while(rs.next()){
-            groupNumber = rs.getInt("total");
-          }
-          
-          String[] groupItems = new String[groupNumber];
-          stmt = conn.createStatement();
-          rs = stmt.executeQuery("SELECT name FROM groups;");
-          while(rs.next()){
-             groupItems[i] = rs.getString("name");
-             i++;
-          }
-          
-          DefaultComboBoxModel model = new DefaultComboBoxModel(groupItems);
-          groupComboBox.setModel(model);
-        } 
-        catch (SQLException ex) {
+        try {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
+            while (rs.next()) {
+                groupNumber = rs.getInt("total");
+            }
+
+            String[] groupItems = new String[groupNumber];
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT name FROM groups;");
+            while (rs.next()) {
+                groupItems[i] = rs.getString("name");
+                i++;
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(groupItems);
+            groupComboBox.setModel(model);
+        } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void populateTeacherComboBox()
-    {
+
+    public void populateTeacherComboBox() {
         int teachersNumber = 0;
         String items[];
-        try
-        {
-          Connection conn = JDBCConnection.getInstance().getConnection();
-          Statement stmt = conn.createStatement();
-          ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM teachers;");
-          while(rs.next()){
-            teachersNumber = rs.getInt("total");
-          }
-          
-          items = new String[teachersNumber];
-          int i = 0;
-          stmt = conn.createStatement();
-          rs = stmt.executeQuery("SELECT last_name, first_name FROM teachers;");
-          while(rs.next()){
-            String last_name = rs.getString("last_name");
-            String first_name = rs.getString("first_name");
-            items[i] = new StringBuilder().append(last_name).append(" ").append(first_name).toString();
-            i++;
-          }
-          
-          DefaultComboBoxModel model = new DefaultComboBoxModel(items);
-          teacherComboBox.setModel(model);
-        } 
-        catch (SQLException ex) {
+        try {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM teachers;");
+            while (rs.next()) {
+                teachersNumber = rs.getInt("total");
+            }
+
+            items = new String[teachersNumber];
+            int i = 0;
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT last_name, first_name FROM teachers;");
+            while (rs.next()) {
+                String last_name = rs.getString("last_name");
+                String first_name = rs.getString("first_name");
+                items[i] = new StringBuilder().append(last_name).append(" ").append(first_name).toString();
+                i++;
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(items);
+            teacherComboBox.setModel(model);
+        } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void updateTeacherComboBox()
-    {
+
+    public void updateTeacherComboBox() {
         String selectedDiscipline = (String) disciplineComboBox.getSelectedItem();
-        try
-        {
+        try {
             Connection conn = JDBCConnection.getInstance().getConnection();
-            
+
             String sql = "SELECT first_name, last_name FROM teachers JOIN discipline ON teachers.course_id = discipline.id WHERE discipline.name = ?;";
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setString(1, selectedDiscipline);
             ResultSet rs = ptmt.executeQuery();
             List<String> items = new ArrayList<>();
-            while (rs.next())
-            {
+            while (rs.next()) {
                 String fName = rs.getString("first_name");
                 String lName = rs.getString("last_name");
-                
+
                 String name = new StringBuilder().append(fName).append(" ").append(lName).toString();
                 items.add(name);
             }
-            
+
             String[] finalItems = items.toArray(new String[items.size()]);
             DefaultComboBoxModel model = new DefaultComboBoxModel(finalItems);
             teacherComboBox.setModel(model);
-        }
-        catch(SQLException ex)
-        {
+        } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void populateDisciplineComboBox()
-    {
+
+    public void populateDisciplineComboBox() {
         int disciplineNumber = 0;
         String items[];
-        try
-        {
-          Connection conn = JDBCConnection.getInstance().getConnection();
-          Statement stmt = conn.createStatement();
-          ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM discipline;");
-          while(rs.next()){
-            disciplineNumber = rs.getInt("total");
-          }
-          
-          items = new String[disciplineNumber];
-          int i = 0;
-          stmt = conn.createStatement();
-          rs = stmt.executeQuery("SELECT name FROM discipline;");
-          while(rs.next()){
-            String name = rs.getString("name");
-            items[i] = new StringBuilder().append(name).toString();
-            i++;
-          }
-          
-          DefaultComboBoxModel model = new DefaultComboBoxModel(items);
-          disciplineComboBox.setModel(model);
-        } 
-        catch (SQLException ex) {
+        try {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM discipline;");
+            while (rs.next()) {
+                disciplineNumber = rs.getInt("total");
+            }
+
+            items = new String[disciplineNumber];
+            int i = 0;
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT name FROM discipline;");
+            while (rs.next()) {
+                String name = rs.getString("name");
+                items[i] = new StringBuilder().append(name).toString();
+                i++;
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(items);
+            disciplineComboBox.setModel(model);
+        } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void updateDisciplineComboBox()
-    {
+
+    public void updateDisciplineComboBox() {
         String selectedGroup = (String) groupComboBox.getSelectedItem();
         int year = selectedGroup.toCharArray()[0] - '0';
         String checkDisciplinesQuery = "SELECT name FROM discipline WHERE year = ?;";
-        try
-        {
+        try {
             Connection conn = JDBCConnection.getInstance().getConnection();
-            
+
             PreparedStatement ptmt1 = conn.prepareStatement("SELECT COUNT(*) AS total FROM discipline WHERE year = ?;");
             ptmt1.setInt(1, year);
             ResultSet rs1 = ptmt1.executeQuery();
             rs1.next();
             String[] items = new String[rs1.getInt("total")];
-            
+
             PreparedStatement ptmt = conn.prepareStatement(checkDisciplinesQuery);
             ptmt.setInt(1, year);
             ResultSet rs = ptmt.executeQuery();
             int i = 0;
-            while (rs.next())
-            {
+            while (rs.next()) {
                 rs.getString("name");
                 items[i++] = rs.getString("name");
             }
             DefaultComboBoxModel model = new DefaultComboBoxModel(items);
             disciplineComboBox.setModel(model);
-        }
-        catch(SQLException ex)
-        {
+        } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void populateClassComboBox()
-    {
+
+    public void populateClassComboBox() {
         String[] items = {"Seminary", "Laboratory", "Course", "Course Exam", "Lab Exam"};
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         classComboBox.setModel(model);
     }
-    
-    public void populateRoomComboBox()
-    {
+
+    public void populateRoomComboBox() {
         int roomsNumber = 0;
         String items[];
-        try
-        {
-          Connection conn = JDBCConnection.getInstance().getConnection();
-          Statement stmt = conn.createStatement();
-          ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM rooms;");
-          while(rs.next()){
-            roomsNumber = rs.getInt("total");
-          }
-          
-          items = new String[roomsNumber];
-          int i = 0;
-          stmt = conn.createStatement();
-          rs = stmt.executeQuery("SELECT name FROM rooms;");
-          while(rs.next()){
-            String name = rs.getString("name");
-            items[i] = new StringBuilder().append(name).toString();
-            i++;
-          }
-          
-          DefaultComboBoxModel model = new DefaultComboBoxModel(items);
-          roomComboBox.setModel(model);
-        } 
-        catch (SQLException ex) {
+        try {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM rooms;");
+            while (rs.next()) {
+                roomsNumber = rs.getInt("total");
+            }
+
+            items = new String[roomsNumber];
+            int i = 0;
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT name FROM rooms;");
+            while (rs.next()) {
+                String name = rs.getString("name");
+                items[i] = new StringBuilder().append(name).toString();
+                i++;
+            }
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(items);
+            roomComboBox.setModel(model);
+        } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void updateRoomComboBox()
-    {
+
+    public void updateRoomComboBox() {
         String selectedClass = (String) classComboBox.getSelectedItem();
         selectedClass = selectedClass.startsWith("C") ? "Course" : selectedClass;
         selectedClass = selectedClass.startsWith("L") ? "Laboratory" : selectedClass;
-         
-        try
-        {
+
+        try {
             Connection conn = JDBCConnection.getInstance().getConnection();
             PreparedStatement ptmt = conn.prepareStatement("SELECT name FROM rooms WHERE type = ?;");
             ptmt.setString(1, selectedClass);
             ResultSet rs = ptmt.executeQuery();
             List<String> itemsList = new ArrayList<>();
-            while(rs.next())
-            {
+            while (rs.next()) {
                 itemsList.add(rs.getString("name"));
             }
             String[] items = itemsList.toArray(new String[itemsList.size()]);
@@ -330,25 +300,22 @@ public class TimetableUI extends javax.swing.JFrame {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void populateTimeSlotStartComboBox()
-    {
+
+    public void populateTimeSlotStartComboBox() {
         String[] items = {"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"};
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         timeSlotStartComboBox.setModel(model);
     }
-    
-    public void updateTimeSlotStartComboBox(int endHour)
-    {
+
+    public void updateTimeSlotStartComboBox(int endHour) {
         Object selectedItem = timeSlotStartComboBox.getSelectedItem();
         int numberOfHours = endHour - 8;
         String[] items = new String[numberOfHours];
-        
-        for (int i = 8, j = 0; i < endHour; i++, j++)
-        {
+
+        for (int i = 8, j = 0; i < endHour; i++, j++) {
             items[j] = String.valueOf(i);
         }
-        
+
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         timeSlotStartComboBox.setModel(model);
         for (int i = 0; i < timeSlotStartComboBox.getItemCount(); i++) {
@@ -360,46 +327,40 @@ public class TimetableUI extends javax.swing.JFrame {
         }
         updateTimeSlotEndComboBox(endHour - 1);
     }
-    
-    public void populateTimeSlotEndComboBox()
-    {
+
+    public void populateTimeSlotEndComboBox() {
         String[] items = {"9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"};
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         timeSlotEndComboBox.setModel(model);
     }
-    
-    public void updateTimeSlotEndComboBox(int startHour)
-    {
+
+    public void updateTimeSlotEndComboBox(int startHour) {
         int numberOfHours = 20 - startHour;
         String[] items = new String[numberOfHours];
-        
-        for (int i = startHour + 1, j = 0; i <= 20; i++, j++)
-        {
+
+        for (int i = startHour + 1, j = 0; i <= 20; i++, j++) {
             items[j] = String.valueOf(i);
         }
-        
+
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         timeSlotEndComboBox.setModel(model);
     }
-    
-    public void populateYearComboBox(String[] items)
-    {
+
+    public void populateYearComboBox(String[] items) {
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         yearComboBox.setModel(model);
     }
-    
-    public void updateYearComboBox()
-    {
+
+    public void updateYearComboBox() {
         String selectedGroup = (String) groupComboBox.getSelectedItem();
         String[] items = new String[1];
-        
+
         items[0] = Character.toString(selectedGroup.toCharArray()[0]);
-        
+
         yearComboBox.setSelectedItem(items[0]);
     }
-    
-    public void populateDayComboBox(String[] items)
-    {
+
+    public void populateDayComboBox(String[] items) {
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         dayComboBox.setModel(model);
     }
@@ -699,202 +660,188 @@ public class TimetableUI extends javax.swing.JFrame {
         populateTable();
     }//GEN-LAST:event_groupComboBoxActionPerformed
 
-
     //function for seeing if class and the room are suitable
     private boolean isRoomSuitable(String newType, String newRoom) {
         boolean ok = true;
-        if (
-                (newType == "Course" && newRoom.charAt(0) != 'C') ||
-                (newType == "Laboratory" && newRoom.charAt(0) != 'L')
-           ){
+        if ((newType == "Course" && newRoom.charAt(0) != 'C')
+                || (newType == "Laboratory" && newRoom.charAt(0) != 'L')) {
             ok = false;
         }
         return ok;
-}
-    
+    }
+
     //functie prin care iau numarul de inregistrari anterioare
-    private Integer getRegistrationsNumber(){
+    private Integer getRegistrationsNumber() {
         //vector folosit pentru vechile inregistrari
         int registrationsNumber = 0;
         RegistrationTimetable registrations[] = null;
 
         //Conectare la BD
-        try
-        {
+        try {
             Connection conn = JDBCConnection.getInstance().getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total_regs FROM timetable;");
-            while(rs.next()){
+            while (rs.next()) {
                 registrationsNumber = rs.getInt("total_regs");
             }
-        }catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         return registrationsNumber;
-    } 
-    
+    }
+
     //functie pentru a lua inregistrarile anterioare din tabel
     private RegistrationTimetable[] getRegistrationsFromDatabase() {
-        
+
         //vector folosit pentru vechile inregistrari
         int registrationsNumber = 0;
         RegistrationTimetable registrations[] = null;
-        
+
         //Connection to database
-        try
-        {
+        try {
             Connection conn = JDBCConnection.getInstance().getConnection();
             registrationsNumber = getRegistrationsNumber();
-            
+
             registrations = new RegistrationTimetable[registrationsNumber];
             int iter = 0;
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM timetable");
-            while(rs.next()){
+            while (rs.next()) {
                 RegistrationTimetable regi = new RegistrationTimetable();
-             
+
                 regi.setStartHour(rs.getInt("start_hour"));
                 regi.setEndHour(rs.getInt("end_hour"));
-                
+
                 String group = rs.getString("group_name");
                 regi.setGroupName(group.trim());
-                
+
                 String course = rs.getString("course");
                 regi.setCourse(course.trim());
-                
+
                 String course_type = rs.getString("course_type");
                 regi.setCourseType(course_type.trim());
-                
+
                 ////DE REVENIT CAND SE ADAUGA PROFII, PUNE TRIM()
                 String teacher = rs.getString("teacher");
                 regi.setTeacher(new StringBuilder().append(teacher).toString());
-                
+
                 String room = rs.getString("room").trim();
                 regi.setRoom(room);
-                
+
                 String day = rs.getString("day");
                 regi.setDay(day.trim());
-                
+
                 registrations[iter++] = regi;
             }
-        }catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return registrations;
 
-        
     }
-    
+
     //functie pentru constrangerea: un curs este inclus total temporal in celalalt
-    private boolean isCourseNotTotallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne){
-        
+    private boolean isCourseNotTotallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
+
         boolean ok = true;
-            
+
         if ( // un curs existent este inclus total temporal cursul nou
-            oldOne.getStartHour() >= newOne.getStartHour() && 
-            oldOne.getEndHour() <= newOne.getEndHour() &&
-            oldOne.getDay().equals(newOne.getDay()) &&
-            (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))
-           ){
+                oldOne.getStartHour() >= newOne.getStartHour()
+                && oldOne.getEndHour() <= newOne.getEndHour()
+                && oldOne.getDay().equals(newOne.getDay())
+                && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
             ok = false;
         }
-        
+
         if ( //un curs existent include total temporal cursul nou
-            oldOne.getStartHour() <= newOne.getStartHour() && 
-            oldOne.getEndHour() >= newOne.getEndHour() &&
-            oldOne.getDay().equals(newOne.getDay()) &&
-            (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))
-           ){
+                oldOne.getStartHour() <= newOne.getStartHour()
+                && oldOne.getEndHour() >= newOne.getEndHour()
+                && oldOne.getDay().equals(newOne.getDay())
+                && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
             ok = false;
         }
-        
+
         return ok;
     }
-    
+
     //functie pentru constrangerea://cursul nou incepe/ se termina in timpul altui curs 
-    private boolean isCourseNotPartiallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne){
+    private boolean isCourseNotPartiallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
         boolean ok = true;
-        
+
         if ( //cursul nou incepe in timpul altui curs 
-            oldOne.getEndHour() > newOne.getStartHour() &&
-            oldOne.getEndHour() <= newOne.getEndHour() &&
-            oldOne.getDay().equals(newOne.getDay()) &&
-            (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))
-           ){
+                oldOne.getEndHour() > newOne.getStartHour()
+                && oldOne.getEndHour() <= newOne.getEndHour()
+                && oldOne.getDay().equals(newOne.getDay())
+                && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
             ok = false;
         }
-        
+
         if ( //cursul nou incepe in timpul altui curs 
-            oldOne.getStartHour() >= newOne.getStartHour() && 
-            oldOne.getStartHour() < newOne.getEndHour() &&
-            oldOne.getDay().equals(newOne.getDay()) &&
-            (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))
-           ){
+                oldOne.getStartHour() >= newOne.getStartHour()
+                && oldOne.getStartHour() < newOne.getEndHour()
+                && oldOne.getDay().equals(newOne.getDay())
+                && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
             ok = false;
         }
         return ok;
-        
+
     }
-    
-    private boolean sameCourseOnceAWeek(RegistrationTimetable oldOne, RegistrationTimetable newOne){
-        
+
+    private boolean sameCourseOnceAWeek(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
+
         boolean ok = true;
-        
+
         if ( //constrangere pentru un singur curs pe saptamana la aceeasi disciplina pentru un an de studiu
-                newOne.getCourseType().equals("Course") 
-           ) {
-            if  (
-                oldOne.getCourseType().equals("Course") &&
-                oldOne.getCourse().equals(newOne.getCourse())&& 
-                oldOne.getGroupName().charAt(0) == newOne.getGroupName().charAt(0)
-                ){
+                newOne.getCourseType().equals("Course")) {
+            if (oldOne.getCourseType().equals("Course")
+                    && oldOne.getCourse().equals(newOne.getCourse())
+                    && oldOne.getGroupName().charAt(0) == newOne.getGroupName().charAt(0)) {
                 ok = false;
-            }     
+            }
         }
         return ok;
     }
-    
+
     //constraints function
-    private boolean isViableForInsert(RegistrationTimetable newReg){
-        
+    private boolean isViableForInsert(RegistrationTimetable newReg) {
+
         boolean ok = true;
-              
+
         //constrangerile legate strict de noua insertie    
-        if (isRoomSuitable(newReg.getCourseType(), newReg.getRoom()) == false){
+        if (isRoomSuitable(newReg.getCourseType(), newReg.getRoom()) == false) {
             ok = false;
             jTextArea1.setText("Invalid room. Choose one suitable for the type of activity that you have chosen. \nCourse rooms - name starts with C; \nLaboratory rooms - name starts with L;");
-        } 
-        
+        }
+
         //luam inregistrarile anterioare pentru a le folosi la constrangeri
         RegistrationTimetable[] registrations = getRegistrationsFromDatabase();
         int registrationsNumber = getRegistrationsNumber();
-                    
-        for(int i = 0; i < registrationsNumber && ok; i++){
+
+        for (int i = 0; i < registrationsNumber && ok; i++) {
             //constrangeri pentru room, teacher si groupName
-            if (isCourseNotTotallyOverlapped(registrations[i], newReg) == false){
+            if (isCourseNotTotallyOverlapped(registrations[i], newReg) == false) {
                 ok = false;
-                jTextArea1.setText("The course that you have inserted overlaps the following one: " + registrations[i].toString() +"\n The activity that you have chosen is: " + newReg.toString());
+                jTextArea1.setText("The course that you have inserted overlaps the following one: " + registrations[i].toString() + "\n The activity that you have chosen is: " + newReg.toString());
                 break;
             }
 
-            if ( isCourseNotPartiallyOverlapped(registrations[i], newReg) == false){
+            if (isCourseNotPartiallyOverlapped(registrations[i], newReg) == false) {
                 ok = false;
-                jTextArea1.setText("The course that you have inserted partially overlaps the following one: " + registrations[i].toString() +"\n The activity that you have chosen is: " + newReg.toString());
+                jTextArea1.setText("The course that you have inserted partially overlaps the following one: " + registrations[i].toString() + "\n The activity that you have chosen is: " + newReg.toString());
                 break;
             }
 
-            if ( sameCourseOnceAWeek(registrations[i], newReg) == false){
+            if (sameCourseOnceAWeek(registrations[i], newReg) == false) {
                 ok = false;
                 jTextArea1.setText("There is already a course of " + registrations[i].getCourse() + " for this year. See table for group " + registrations[i].getGroupName() + ".");
                 break;
-            }  
-        }            
+            }
+        }
 
-        
         return ok;
     }
-    
+
     private void submitButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButonActionPerformed
         int startHour = Integer.parseInt((String) timeSlotStartComboBox.getSelectedItem());
         int endHour = Integer.parseInt((String) timeSlotEndComboBox.getSelectedItem());
@@ -904,9 +851,9 @@ public class TimetableUI extends javax.swing.JFrame {
         String teacher = (String) teacherComboBox.getSelectedItem();
         String room = (String) roomComboBox.getSelectedItem();
         String day = (String) dayComboBox.getSelectedItem();
-        
+
         RegistrationTimetable newReg = new RegistrationTimetable();
-        
+
         newReg.setStartHour(startHour);
         newReg.setEndHour(endHour);
         newReg.setGroupName(group);
@@ -915,12 +862,44 @@ public class TimetableUI extends javax.swing.JFrame {
         newReg.setTeacher(teacher);
         newReg.setRoom(room);
         newReg.setDay(day);
-        
-        if (isViableForInsert(newReg)){
-            try
-            {
-                Connection conn = JDBCConnection.getInstance().getConnection();
-                try (PreparedStatement ptmt = conn.prepareStatement("INSERT INTO timetable (room, start_hour, end_hour, day, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);")) {
+
+        if (isViableForInsert(newReg)) {
+            if (newReg.getCourseType().equals("Course")) {
+                try {
+                    int groupNumber = 0;
+                    Connection conn = JDBCConnection.getInstance().getConnection();
+                    Statement stmt = conn.createStatement();
+                    ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
+                    while (rs.next()) {
+                        groupNumber = rs.getInt("total");
+                    }
+
+                    String currentGroup = new String();
+                    stmt = conn.createStatement();
+                    rs = stmt.executeQuery("SELECT name FROM groups;");
+                    while (rs.next()) {
+                        currentGroup = rs.getString("name").trim();
+                        if (newReg.getGroupName().charAt(0) == currentGroup.charAt(0)) {
+                            PreparedStatement ptmt = conn.prepareStatement("INSERT INTO timetable (room, start_hour, end_hour, day, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);");
+                            ptmt.setString(1, room);
+                            ptmt.setInt(2, startHour);
+                            ptmt.setInt(3, endHour);
+                            ptmt.setString(4, day);
+                            ptmt.setString(5, discipline);
+                            ptmt.setString(6, type);
+                            ptmt.setString(7, currentGroup);
+                            ptmt.setString(8, teacher);
+                            ptmt.executeUpdate();
+                            jTextArea1.setText("The activity was registered.");
+                        }
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                try {
+                    Connection conn = JDBCConnection.getInstance().getConnection();
+                    PreparedStatement ptmt = conn.prepareStatement("INSERT INTO timetable (room, start_hour, end_hour, day, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);");
                     ptmt.setString(1, room);
                     ptmt.setInt(2, startHour);
                     ptmt.setInt(3, endHour);
@@ -931,12 +910,11 @@ public class TimetableUI extends javax.swing.JFrame {
                     ptmt.setString(8, teacher);
                     ptmt.executeUpdate();
                     jTextArea1.setText("The activity was registered.");
+                } catch (SQLException ex) {
+                    Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
         populateTable();
     }//GEN-LAST:event_submitButonActionPerformed
 
@@ -946,13 +924,13 @@ public class TimetableUI extends javax.swing.JFrame {
 
     private void timeSlotStartComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeSlotStartComboBoxActionPerformed
         JComboBox<String> comboBox = (JComboBox<String>) evt.getSource();
-        int selectedHour = Integer.parseInt((String)comboBox.getSelectedItem());
+        int selectedHour = Integer.parseInt((String) comboBox.getSelectedItem());
         updateTimeSlotEndComboBox(selectedHour);
     }//GEN-LAST:event_timeSlotStartComboBoxActionPerformed
 
     private void timeSlotEndComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeSlotEndComboBoxActionPerformed
         JComboBox<String> comboBox = (JComboBox<String>) evt.getSource();
-        int selectedHour = Integer.parseInt((String)comboBox.getSelectedItem());
+        int selectedHour = Integer.parseInt((String) comboBox.getSelectedItem());
         updateTimeSlotStartComboBox(selectedHour);
     }//GEN-LAST:event_timeSlotEndComboBoxActionPerformed
 
@@ -965,7 +943,7 @@ public class TimetableUI extends javax.swing.JFrame {
         if (selectedRowIndex == -1) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.INFO, "No items telected");
         }
-            
+
         try {
             String value = jTable1.getValueAt(selectedRowIndex, 0).toString();
             Connection conn = JDBCConnection.getInstance().getConnection();
@@ -973,18 +951,15 @@ public class TimetableUI extends javax.swing.JFrame {
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setInt(1, Integer.parseInt(value));
             int rowsDeleted = ptmt.executeUpdate();
-            if (rowsDeleted > 0)
-            {
+            if (rowsDeleted > 0) {
                 Logger.getLogger(TimetableUI.class.getName()).log(Level.INFO, "ITEM DELETED");
-            }
-            else
-            {
+            } else {
                 Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, "ITEM WAS NOT DELETED");
             }
         } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         populateTable();
     }//GEN-LAST:event_removeItemActionPerformed
 
