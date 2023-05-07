@@ -4,6 +4,7 @@
  */
 package com.css.timetable;
 
+import com.css.timetable.export.ExportTimetable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -446,7 +447,7 @@ public class TimetableUI extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Export");
+        jButton2.setText("Export All");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -694,10 +695,12 @@ public class TimetableUI extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        populateTable();
     }//GEN-LAST:event_submitButonActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        ExportTimetable.createHTML();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void timeSlotStartComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeSlotStartComboBoxActionPerformed

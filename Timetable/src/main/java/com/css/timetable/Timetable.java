@@ -5,9 +5,9 @@
 
 package com.css.timetable;
 
+import com.css.timetable.export.ExportTimetable;
 import com.css.timetable.setup.DatabaseSetup;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.swing.JFrame;
 public class Timetable {
 
