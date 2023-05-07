@@ -5,7 +5,6 @@
 
 package com.css.timetable;
 
-import com.css.timetable.export.ExportTimetable;
 import com.css.timetable.setup.DatabaseSetup;
 import java.sql.SQLException;
 import javax.swing.JFrame;
@@ -21,6 +20,8 @@ public class Timetable {
 //        System.out.println(cr.getProperty("database.url"));
         
         JFrame frame = new TimetableUI();
+        frame.setSize(750,700);
+        frame.setResizable(false);
         frame.setVisible(true);
     }
 }
