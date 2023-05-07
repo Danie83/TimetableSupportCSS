@@ -48,7 +48,7 @@ public class ExportTimetable {
                         + "WHEN 'Friday' THEN 5 "
                         + "END AS day_number "
                         + "FROM timetable "
-                        + "WHERE group_name = ? ORDER BY day_number ASC;");
+                        + "WHERE group_name = ? ORDER BY day_number ASC, start_hour ASC;");
                 ptmt.setString(1, group);
                 ResultSet prs = ptmt.executeQuery();
                 List<String[]> timetableRows = new ArrayList<>();
