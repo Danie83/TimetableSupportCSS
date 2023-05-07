@@ -696,6 +696,202 @@ public class TimetableUI extends javax.swing.JFrame {
         populateTable();
     }//GEN-LAST:event_groupComboBoxActionPerformed
 
+
+    //function for seeing if class and the room are suitable
+    private boolean isRoomSuitable(String newType, String newRoom) {
+        boolean ok = true;
+        if (
+                (newType == "Course" && newRoom.charAt(0) != 'C') ||
+                (newType == "Laboratory" && newRoom.charAt(0) != 'L')
+           ){
+            ok = false;
+        }
+        return ok;
+}
+    
+    //functie prin care iau numarul de inregistrari anterioare
+    private Integer getRegistrationsNumber(){
+        //vector folosit pentru vechile inregistrari
+        int registrationsNumber = 0;
+        RegistrationTimetable registrations[] = null;
+
+        //Conectare la BD
+        try
+        {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total_regs FROM timetable;");
+            while(rs.next()){
+                registrationsNumber = rs.getInt("total_regs");
+            }
+        }catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return registrationsNumber;
+    } 
+    
+    //functie pentru a lua inregistrarile anterioare din tabel
+    private RegistrationTimetable[] getRegistrationsFromDatabase() {
+        
+        //vector folosit pentru vechile inregistrari
+        int registrationsNumber = 0;
+        RegistrationTimetable registrations[] = null;
+        
+        //Connection to database
+        try
+        {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            registrationsNumber = getRegistrationsNumber();
+            
+            registrations = new RegistrationTimetable[registrationsNumber];
+            int iter = 0;
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM timetable");
+            while(rs.next()){
+                RegistrationTimetable regi = new RegistrationTimetable();
+             
+                regi.setStartHour(rs.getInt("start_hour"));
+                regi.setEndHour(rs.getInt("end_hour"));
+                
+                String group = rs.getString("group_name");
+                regi.setGroupName(group.trim());
+                
+                String course = rs.getString("course");
+                regi.setCourse(course.trim());
+                
+                String course_type = rs.getString("course_type");
+                regi.setCourseType(course_type.trim());
+                
+                ////DE REVENIT CAND SE ADAUGA PROFII, PUNE TRIM()
+                String teacher = rs.getString("teacher");
+                regi.setTeacher(new StringBuilder().append(teacher).toString());
+                
+                String room = rs.getString("room").trim();
+                regi.setRoom(room);
+                
+                String day = rs.getString("day");
+                regi.setDay(day.trim());
+                
+                registrations[iter++] = regi;
+            }
+        }catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return registrations;
+
+        
+    }
+    
+    //functie pentru constrangerea: un curs este inclus total temporal in celalalt
+    private boolean isCourseNotTotallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne){
+        
+        boolean ok = true;
+            
+        if ( // un curs existent este inclus total temporal cursul nou
+            oldOne.getStartHour() >= newOne.getStartHour() && 
+            oldOne.getEndHour() <= newOne.getEndHour() &&
+            oldOne.getDay().equals(newOne.getDay()) &&
+            (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))
+           ){
+            ok = false;
+        }
+        
+        if ( //un curs existent include total temporal cursul nou
+            oldOne.getStartHour() <= newOne.getStartHour() && 
+            oldOne.getEndHour() >= newOne.getEndHour() &&
+            oldOne.getDay().equals(newOne.getDay()) &&
+            (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))
+           ){
+            ok = false;
+        }
+        
+        return ok;
+    }
+    
+    //functie pentru constrangerea://cursul nou incepe/ se termina in timpul altui curs 
+    private boolean isCourseNotPartiallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne){
+        boolean ok = true;
+        
+        if ( //cursul nou incepe in timpul altui curs 
+            oldOne.getEndHour() > newOne.getStartHour() &&
+            oldOne.getEndHour() <= newOne.getEndHour() &&
+            oldOne.getDay().equals(newOne.getDay()) &&
+            (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))
+           ){
+            ok = false;
+        }
+        
+        if ( //cursul nou incepe in timpul altui curs 
+            oldOne.getStartHour() >= newOne.getStartHour() && 
+            oldOne.getStartHour() < newOne.getEndHour() &&
+            oldOne.getDay().equals(newOne.getDay()) &&
+            (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))
+           ){
+            ok = false;
+        }
+        return ok;
+        
+    }
+    
+    private boolean sameCourseOnceAWeek(RegistrationTimetable oldOne, RegistrationTimetable newOne){
+        
+        boolean ok = true;
+        
+        if ( //constrangere pentru un singur curs pe saptamana la aceeasi disciplina pentru un an de studiu
+                newOne.getCourseType().equals("Course") 
+           ) {
+            if  (
+                oldOne.getCourseType().equals("Course") &&
+                oldOne.getCourse().equals(newOne.getCourse())&& 
+                oldOne.getGroupName().charAt(0) == newOne.getGroupName().charAt(0)
+                ){
+                ok = false;
+            }     
+        }
+        return ok;
+    }
+    
+    //constraints function
+    private boolean isViableForInsert(RegistrationTimetable newReg){
+        
+        boolean ok = true;
+              
+        //constrangerile legate strict de noua insertie    
+        if (isRoomSuitable(newReg.getCourseType(), newReg.getRoom()) == false){
+            ok = false;
+            jTextArea1.setText("Invalid room. Choose one suitable for the type of activity that you have chosen. \nCourse rooms - name starts with C; \nLaboratory rooms - name starts with L;");
+        } 
+        
+        //luam inregistrarile anterioare pentru a le folosi la constrangeri
+        RegistrationTimetable[] registrations = getRegistrationsFromDatabase();
+        int registrationsNumber = getRegistrationsNumber();
+                    
+        for(int i = 0; i < registrationsNumber && ok; i++){
+            //constrangeri pentru room, teacher si groupName
+            if (isCourseNotTotallyOverlapped(registrations[i], newReg) == false){
+                ok = false;
+                jTextArea1.setText("The course that you have inserted overlaps the following one: " + registrations[i].toString() +"\n The activity that you have chosen is: " + newReg.toString());
+                break;
+            }
+
+            if ( isCourseNotPartiallyOverlapped(registrations[i], newReg) == false){
+                ok = false;
+                jTextArea1.setText("The course that you have inserted partially overlaps the following one: " + registrations[i].toString() +"\n The activity that you have chosen is: " + newReg.toString());
+                break;
+            }
+
+            if ( sameCourseOnceAWeek(registrations[i], newReg) == false){
+                ok = false;
+                jTextArea1.setText("There is already a course of " + registrations[i].getCourse() + " for this year. See table for group " + registrations[i].getGroupName() + ".");
+                break;
+            }  
+        }            
+
+        
+        return ok;
+    }
+    
     private void submitButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButonActionPerformed
         int startHour = Integer.parseInt((String) timeSlotStartComboBox.getSelectedItem());
         int endHour = Integer.parseInt((String) timeSlotEndComboBox.getSelectedItem());
@@ -706,22 +902,36 @@ public class TimetableUI extends javax.swing.JFrame {
         String room = (String) roomComboBox.getSelectedItem();
         String day = (String) dayComboBox.getSelectedItem();
         
-        try
-        {
-            Connection conn = JDBCConnection.getInstance().getConnection();
-            try (PreparedStatement ptmt = conn.prepareStatement("INSERT INTO timetable (room, start_hour, end_hour, day, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);")) {
-                ptmt.setString(1, room);
-                ptmt.setInt(2, startHour);
-                ptmt.setInt(3, endHour);
-                ptmt.setString(4, day);
-                ptmt.setString(5, discipline);
-                ptmt.setString(6, type);
-                ptmt.setString(7, group);
-                ptmt.setString(8, teacher);
-                ptmt.executeUpdate();
+        RegistrationTimetable newReg = new RegistrationTimetable();
+        
+        newReg.setStartHour(startHour);
+        newReg.setEndHour(endHour);
+        newReg.setGroupName(group);
+        newReg.setCourse(discipline);
+        newReg.setCourseType(type);
+        newReg.setTeacher(teacher);
+        newReg.setRoom(room);
+        newReg.setDay(day);
+        
+        if (isViableForInsert(newReg)){
+            try
+            {
+                Connection conn = JDBCConnection.getInstance().getConnection();
+                try (PreparedStatement ptmt = conn.prepareStatement("INSERT INTO timetable (room, start_hour, end_hour, day, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);")) {
+                    ptmt.setString(1, room);
+                    ptmt.setInt(2, startHour);
+                    ptmt.setInt(3, endHour);
+                    ptmt.setString(4, day);
+                    ptmt.setString(5, discipline);
+                    ptmt.setString(6, type);
+                    ptmt.setString(7, group);
+                    ptmt.setString(8, teacher);
+                    ptmt.executeUpdate();
+                    jTextArea1.setText("The activity was registered.");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         populateTable();
