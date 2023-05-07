@@ -336,8 +336,9 @@ public class TimetableUI extends javax.swing.JFrame {
         timeSlotStartComboBox.setModel(model);
     }
     
-        public void updateTimeSlotStartComboBox(int endHour)
+    public void updateTimeSlotStartComboBox(int endHour)
     {
+        Object selectedItem = timeSlotStartComboBox.getSelectedItem();
         int numberOfHours = endHour - 8;
         String[] items = new String[numberOfHours];
         
@@ -348,6 +349,14 @@ public class TimetableUI extends javax.swing.JFrame {
         
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         timeSlotStartComboBox.setModel(model);
+        for (int i = 0; i < timeSlotStartComboBox.getItemCount(); i++) {
+            Object item = timeSlotStartComboBox.getItemAt(i);
+            if (item != null && item.toString().equals(selectedItem.toString())) {
+                timeSlotStartComboBox.setSelectedItem(selectedItem.toString());
+                break;
+            }
+        }
+        updateTimeSlotEndComboBox(endHour - 1);
     }
     
     public void populateTimeSlotEndComboBox()
