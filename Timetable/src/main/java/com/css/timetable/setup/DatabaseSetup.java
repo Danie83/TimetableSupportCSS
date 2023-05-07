@@ -109,8 +109,10 @@ public class DatabaseSetup
                             ptmt.setString(1, groupName);
                             ptmt.executeUpdate();
                         }
+                        System.out.println(groupName);
                     }
                 }
+                initial++;
             }
             
             // Populate rooms table
