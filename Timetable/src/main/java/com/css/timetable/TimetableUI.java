@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -55,6 +56,9 @@ public class TimetableUI extends javax.swing.JFrame {
         populateYearComboBox(yearItems);
         String[] dayItems = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         populateDayComboBox(dayItems);
+        
+        jTextArea1.setLineWrap(true);
+        jTextArea1.setWrapStyleWord(true);
     }
     
     public void updateUI()
@@ -103,6 +107,7 @@ public class TimetableUI extends javax.swing.JFrame {
         
         DefaultTableModel model = new DefaultTableModel(data, columns);
         jTable1.setModel(model);
+        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(0);
         jTable1.getColumnModel().getColumn(0).setMinWidth(0);
         jTable1.getColumnModel().getColumn(0).setMaxWidth(0);
@@ -474,6 +479,7 @@ public class TimetableUI extends javax.swing.JFrame {
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
+        jTextArea1.setMaximumSize(new java.awt.Dimension(16, 27));
         jScrollPane2.setViewportView(jTextArea1);
 
         jLabel10.setText("Log");
