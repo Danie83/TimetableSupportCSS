@@ -20,8 +20,8 @@ public class Timetable {
 //        System.out.println(cr.getProperty("database.url"));
         
         JFrame frame = new TimetableUI();
-        frame.setSize(750,700);
-        frame.setResizable(false);
+        //frame.setSize(800, 750);
+        //frame.setResizable(false);
         frame.setVisible(true);
     }
 }

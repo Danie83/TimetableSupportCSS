@@ -42,6 +42,7 @@ public class TimetableUI extends javax.swing.JFrame {
         updateRoomComboBox();
 
         populateTable();
+        textAreaExamDate.setVisible(false);
 
         ConfigReader config = ConfigReader.getInstance();
 
@@ -55,8 +56,6 @@ public class TimetableUI extends javax.swing.JFrame {
         String[] dayItems = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         populateDayComboBox(dayItems);
         
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setWrapStyleWord(true);
     }
 
     public void updateUI() {
@@ -64,6 +63,47 @@ public class TimetableUI extends javax.swing.JFrame {
         // modify existent method to receive a parameter
         // populateGroupComboBox(items);
         // updateUI should be called when required (button is pressed, combobox item is selected)
+    }
+    
+    public void populateExamTable(){
+        String columns[] = {"id", "From - To", "Group", "Discipline", "Type", "Teacher", "Date", "Room"};
+        String group = (String) groupComboBox.getSelectedItem();
+        String sql = "SELECT * FROM examtable WHERE group_name = ?;";
+        List<String[]> timetable = new ArrayList<>();
+        try {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+            ptmt.setString(1, group);
+            ResultSet rs = ptmt.executeQuery();
+            while (rs.next()) {
+                int i = 0;
+                String[] item = new String[columns.length];
+                item[i++] = String.valueOf(rs.getInt("id"));
+                item[i++] = new StringBuilder().append(rs.getInt("start_hour")).append(" - ").append(rs.getInt("end_hour")).toString();
+                item[i++] = rs.getString("group_name");
+                item[i++] = rs.getString("course");
+                item[i++] = rs.getString("course_type");
+                item[i++] = rs.getString("teacher");
+                item[i++] = rs.getString("date");
+                item[i++] = rs.getString("room");
+                timetable.add(item);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String[][] data = new String[timetable.size()][];
+        for (int j = 0; j < timetable.size(); j++) {
+            data[j] = timetable.get(j);
+        }
+
+        DefaultTableModel model = new DefaultTableModel(data, columns);
+        jTable2.setModel(model);
+        jTable2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jTable2.getColumnModel().getColumn(0).setPreferredWidth(0);
+        jTable2.getColumnModel().getColumn(0).setMinWidth(0);
+        jTable2.getColumnModel().getColumn(0).setMaxWidth(0);
+        jTable2.getColumnModel().getColumn(0).setResizable(false);
     }
 
     public void populateTable() {
@@ -105,7 +145,6 @@ public class TimetableUI extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(0).setMinWidth(0);
         jTable1.getColumnModel().getColumn(0).setMaxWidth(0);
         jTable1.getColumnModel().getColumn(0).setResizable(false);
-
     }
 
     public void populateGroupComboBox() {
@@ -394,6 +433,7 @@ public class TimetableUI extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         groupComboBox = new javax.swing.JComboBox<>();
         teacherComboBox = new javax.swing.JComboBox<>();
@@ -404,7 +444,11 @@ public class TimetableUI extends javax.swing.JFrame {
         timeSlotEndComboBox = new javax.swing.JComboBox<>();
         yearComboBox = new javax.swing.JComboBox<>();
         dayComboBox = new javax.swing.JComboBox<>();
+        textAreaExamDate = new javax.swing.JTextField();
         removeItem = new javax.swing.JButton();
+        examTimetableLabel = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -461,6 +505,8 @@ public class TimetableUI extends javax.swing.JFrame {
 
         jLabel12.setText("Day:");
 
+        jLabel13.setText("Exam Date:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -480,28 +526,33 @@ public class TimetableUI extends javax.swing.JFrame {
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8)
                             .addComponent(jLabel12))
-                        .addGap(0, 12, Short.MAX_VALUE))))
+                        .addGap(0, 12, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(9, 9, 9)
                 .addComponent(jLabel2)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
-                .addGap(15, 15, 15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel6)
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel12)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         groupComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -547,11 +598,14 @@ public class TimetableUI extends javax.swing.JFrame {
 
         dayComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        textAreaExamDate.setText("jTextField1");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(groupComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(teacherComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -563,8 +617,9 @@ public class TimetableUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(timeSlotEndComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(yearComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dayComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                    .addComponent(dayComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textAreaExamDate, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -583,10 +638,12 @@ public class TimetableUI extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(timeSlotStartComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(timeSlotEndComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(yearComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dayComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(textAreaExamDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -597,6 +654,18 @@ public class TimetableUI extends javax.swing.JFrame {
             }
         });
 
+        examTimetableLabel.setText("Exam Timetable");
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane4.setViewportView(jTable2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -604,12 +673,14 @@ public class TimetableUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(31, 31, 31)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel9)
@@ -618,15 +689,20 @@ public class TimetableUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton2))
                             .addComponent(jLabel10)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)
-                            .addComponent(removeItem))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel11)
+                                .addComponent(removeItem)))
+                        .addGap(32, 32, 32))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jScrollPane4)
+                        .addContainerGap())))
             .addGroup(layout.createSequentialGroup()
-                .addGap(326, 326, 326)
-                .addComponent(jLabel11)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(332, 332, 332)
+                .addComponent(examTimetableLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -645,15 +721,17 @@ public class TimetableUI extends javax.swing.JFrame {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(removeItem)
-                        .addGap(18, 18, 18)
+                        .addGap(49, 49, 49)
                         .addComponent(jLabel11))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 16, Short.MAX_VALUE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(examTimetableLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -856,7 +934,9 @@ public class TimetableUI extends javax.swing.JFrame {
         String teacher = (String) teacherComboBox.getSelectedItem();
         String room = (String) roomComboBox.getSelectedItem();
         String day = (String) dayComboBox.getSelectedItem();
-
+        String date = (String) textAreaExamDate.getText();
+        System.out.println(date);
+        
         RegistrationTimetable newReg = new RegistrationTimetable();
 
         newReg.setStartHour(startHour);
@@ -867,8 +947,19 @@ public class TimetableUI extends javax.swing.JFrame {
         newReg.setTeacher(teacher);
         newReg.setRoom(room);
         newReg.setDay(day);
-
-        if (isViableForInsert(newReg)) {
+        
+        boolean okExam = false;
+        String[] splitType = type.split(" ");
+        if(splitType.length > 1){
+            if(splitType[1].equals("Exam")){
+                okExam = true;
+            }
+            else{
+                okExam = false;
+            }
+        }
+        
+        if (!okExam && isViableForInsert(newReg)) {
             if (newReg.getCourseType().equals("Course")) {
                 try {
                     int groupNumber = 0;
@@ -901,7 +992,8 @@ public class TimetableUI extends javax.swing.JFrame {
                 } catch (SQLException ex) {
                     Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } else {
+            }
+            else {
                 try {
                     Connection conn = JDBCConnection.getInstance().getConnection();
                     PreparedStatement ptmt = conn.prepareStatement("INSERT INTO timetable (room, start_hour, end_hour, day, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);");
@@ -920,7 +1012,42 @@ public class TimetableUI extends javax.swing.JFrame {
                 }
             }
         }
+        if (okExam) {
+            try {
+                int groupNumber = 0;
+                Connection conn = JDBCConnection.getInstance().getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
+                while (rs.next()) {
+                    groupNumber = rs.getInt("total");
+                }
+
+                String currentGroup = new String();
+                stmt = conn.createStatement();
+                rs = stmt.executeQuery("SELECT name FROM groups;");
+                while (rs.next()) {
+                    currentGroup = rs.getString("name").trim();
+                    if (newReg.getGroupName().charAt(0) == currentGroup.charAt(0)) {
+                        PreparedStatement ptmt = conn.prepareStatement("INSERT INTO examtable (room, start_hour, end_hour, date, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);");
+                        ptmt.setString(1, room);
+                        ptmt.setInt(2, startHour);
+                        ptmt.setInt(3, endHour);
+                        ptmt.setString(4, date);
+                        ptmt.setString(5, discipline);
+                        ptmt.setString(6, type);
+                        ptmt.setString(7, currentGroup);
+                        ptmt.setString(8, teacher);
+                        ptmt.executeUpdate();
+                        jTextArea1.setText("The activity was registered.");
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        populateExamTable();
         populateTable();
+        
     }//GEN-LAST:event_submitButonActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -941,6 +1068,19 @@ public class TimetableUI extends javax.swing.JFrame {
 
     private void classComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classComboBoxActionPerformed
         updateRoomComboBox();
+        
+        JComboBox<String> comboBox = (JComboBox<String>) evt.getSource();
+        String selectedClassType = (String) comboBox.getSelectedItem();
+        String[] splitRoomType = selectedClassType.split(" ");
+        if(splitRoomType.length > 1){
+            if(splitRoomType[1].equals("Exam")){
+                textAreaExamDate.setVisible(true);
+            }
+        }
+        else{
+            textAreaExamDate.setVisible(false);
+        }
+        
     }//GEN-LAST:event_classComboBoxActionPerformed
 
     private void removeItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeItemActionPerformed
@@ -1011,12 +1151,14 @@ public class TimetableUI extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> classComboBox;
     private javax.swing.JComboBox<String> dayComboBox;
     private javax.swing.JComboBox<String> disciplineComboBox;
+    private javax.swing.JLabel examTimetableLabel;
     private javax.swing.JComboBox<String> groupComboBox;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1029,12 +1171,15 @@ public class TimetableUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JButton removeItem;
     private javax.swing.JComboBox<String> roomComboBox;
     private javax.swing.JButton submitButon;
     private javax.swing.JComboBox<String> teacherComboBox;
+    private javax.swing.JTextField textAreaExamDate;
     private javax.swing.JComboBox<String> timeSlotEndComboBox;
     private javax.swing.JComboBox<String> timeSlotStartComboBox;
     private javax.swing.JComboBox<String> yearComboBox;
