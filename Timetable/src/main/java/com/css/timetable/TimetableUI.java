@@ -11,16 +11,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 public class TimetableUI extends javax.swing.JFrame {
-
     /**
      * Creates new form TimetableUI
      */
@@ -65,7 +67,7 @@ public class TimetableUI extends javax.swing.JFrame {
     
     public void populateTable()
     {
-        String columns[] = {"From - To", "Group", "Discipline", "Type", "Teacher", "Day", "Room"};
+        String columns[] = {"id", "From - To", "Group", "Discipline", "Type", "Teacher", "Day", "Room"};
         String group = (String) groupComboBox.getSelectedItem();
         String sql = "SELECT * FROM timetable WHERE group_name = ?;";
         List<String[]> timetable = new ArrayList<>();
@@ -79,6 +81,7 @@ public class TimetableUI extends javax.swing.JFrame {
             {
                 int i = 0;
                 String[] item = new String[columns.length];
+                item[i++] = String.valueOf(rs.getInt("id"));
                 item[i++] = new StringBuilder().append(rs.getInt("start_hour")).append(" - ").append(rs.getInt("end_hour")).toString();
                 item[i++] = rs.getString("group_name");
                 item[i++] = rs.getString("course");
@@ -100,6 +103,11 @@ public class TimetableUI extends javax.swing.JFrame {
         
         DefaultTableModel model = new DefaultTableModel(data, columns);
         jTable1.setModel(model);
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(0);
+        jTable1.getColumnModel().getColumn(0).setMinWidth(0);
+        jTable1.getColumnModel().getColumn(0).setMaxWidth(0);
+        jTable1.getColumnModel().getColumn(0).setResizable(false);
+
     }
     
     public void populateGroupComboBox()
@@ -423,6 +431,7 @@ public class TimetableUI extends javax.swing.JFrame {
         timeSlotEndComboBox = new javax.swing.JComboBox<>();
         yearComboBox = new javax.swing.JComboBox<>();
         dayComboBox = new javax.swing.JComboBox<>();
+        removeItem = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -602,6 +611,13 @@ public class TimetableUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        removeItem.setText("Remove Item");
+        removeItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeItemActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -624,7 +640,8 @@ public class TimetableUI extends javax.swing.JFrame {
                                 .addComponent(jButton2))
                             .addComponent(jLabel10)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
+                            .addComponent(jLabel1)
+                            .addComponent(removeItem))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
@@ -648,6 +665,8 @@ public class TimetableUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(removeItem)
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel11))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -719,6 +738,34 @@ public class TimetableUI extends javax.swing.JFrame {
         updateRoomComboBox();
     }//GEN-LAST:event_classComboBoxActionPerformed
 
+    private void removeItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeItemActionPerformed
+        int selectedRowIndex = jTable1.getSelectedRow();
+        if (selectedRowIndex == -1) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.INFO, "No items telected");
+        }
+            
+        try {
+            String value = jTable1.getValueAt(selectedRowIndex, 0).toString();
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            String sql = "DELETE FROM timetable WHERE id = ?";
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+            ptmt.setInt(1, Integer.parseInt(value));
+            int rowsDeleted = ptmt.executeUpdate();
+            if (rowsDeleted > 0)
+            {
+                Logger.getLogger(TimetableUI.class.getName()).log(Level.INFO, "ITEM DELETED");
+            }
+            else
+            {
+                Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, "ITEM WAS NOT DELETED");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        populateTable();
+    }//GEN-LAST:event_removeItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -778,6 +825,7 @@ public class TimetableUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JButton removeItem;
     private javax.swing.JComboBox<String> roomComboBox;
     private javax.swing.JButton submitButon;
     private javax.swing.JComboBox<String> teacherComboBox;
