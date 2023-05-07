@@ -167,7 +167,6 @@ public class TimetableUI extends javax.swing.JFrame {
         String selectedDiscipline = (String) disciplineComboBox.getSelectedItem();
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
-
             String sql = "SELECT first_name, last_name FROM teachers JOIN discipline ON teachers.course_id = discipline.id WHERE discipline.name = ?;";
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setString(1, selectedDiscipline);
@@ -179,6 +178,7 @@ public class TimetableUI extends javax.swing.JFrame {
 
                 String name = new StringBuilder().append(fName).append(" ").append(lName).toString();
                 items.add(name);
+                System.out.println(name);
             }
 
             String[] finalItems = items.toArray(new String[items.size()]);
@@ -243,6 +243,7 @@ public class TimetableUI extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        updateTeacherComboBox();
     }
 
     public void populateClassComboBox() {
@@ -513,6 +514,11 @@ public class TimetableUI extends javax.swing.JFrame {
         teacherComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         disciplineComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        disciplineComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                disciplineComboBoxActionPerformed(evt);
+            }
+        });
 
         classComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         classComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -655,7 +661,6 @@ public class TimetableUI extends javax.swing.JFrame {
 
     private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupComboBoxActionPerformed
         updateDisciplineComboBox();
-        updateTeacherComboBox();
         updateYearComboBox();
         populateTable();
     }//GEN-LAST:event_groupComboBoxActionPerformed
@@ -962,6 +967,10 @@ public class TimetableUI extends javax.swing.JFrame {
 
         populateTable();
     }//GEN-LAST:event_removeItemActionPerformed
+
+    private void disciplineComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disciplineComboBoxActionPerformed
+        updateTeacherComboBox();
+    }//GEN-LAST:event_disciplineComboBoxActionPerformed
 
     /**
      * @param args the command line arguments
