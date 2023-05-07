@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +37,7 @@ public class TimetableUI extends javax.swing.JFrame {
         updateDisciplineComboBox();
         updateTeacherComboBox();
         updateYearComboBox();
+        updateRoomComboBox();
         
         populateTable();
         
@@ -295,6 +295,31 @@ public class TimetableUI extends javax.swing.JFrame {
         }
     }
     
+    public void updateRoomComboBox()
+    {
+        String selectedClass = (String) classComboBox.getSelectedItem();
+        selectedClass = selectedClass.startsWith("C") ? "Course" : selectedClass;
+        selectedClass = selectedClass.startsWith("L") ? "Laboratory" : selectedClass;
+         
+        try
+        {
+            Connection conn = JDBCConnection.getInstance().getConnection();
+            PreparedStatement ptmt = conn.prepareStatement("SELECT name FROM rooms WHERE type = ?;");
+            ptmt.setString(1, selectedClass);
+            ResultSet rs = ptmt.executeQuery();
+            List<String> itemsList = new ArrayList<>();
+            while(rs.next())
+            {
+                itemsList.add(rs.getString("name"));
+            }
+            String[] items = itemsList.toArray(new String[itemsList.size()]);
+            DefaultComboBoxModel model = new DefaultComboBoxModel(items);
+            roomComboBox.setModel(model);
+        } catch (SQLException ex) {
+            Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void populateTimeSlotStartComboBox()
     {
         String[] items = {"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"};
@@ -507,6 +532,11 @@ public class TimetableUI extends javax.swing.JFrame {
         disciplineComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         classComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        classComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                classComboBoxActionPerformed(evt);
+            }
+        });
 
         roomComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -681,6 +711,10 @@ public class TimetableUI extends javax.swing.JFrame {
         int selectedHour = Integer.parseInt((String)comboBox.getSelectedItem());
         updateTimeSlotStartComboBox(selectedHour);
     }//GEN-LAST:event_timeSlotEndComboBoxActionPerformed
+
+    private void classComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classComboBoxActionPerformed
+        updateRoomComboBox();
+    }//GEN-LAST:event_classComboBoxActionPerformed
 
     /**
      * @param args the command line arguments
