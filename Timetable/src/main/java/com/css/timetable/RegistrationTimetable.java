@@ -137,10 +137,4 @@ public class RegistrationTimetable {
                 ", teacher='" + teacher + '\'' +
                 '}';
     }
-
-    
-    
-    
-    
-    
 }

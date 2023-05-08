@@ -52,6 +52,8 @@ public class ExportTimetable {
                 ptmt.setString(1, group);
                 ResultSet prs = ptmt.executeQuery();
                 List<String[]> timetableRows = new ArrayList<>();
+                List<String[]> examTableRows = new ArrayList<>();
+                
                 while (prs.next())
                 {
                     String[] row = new String[headers.length];
@@ -62,35 +64,69 @@ public class ExportTimetable {
                     row[4] = prs.getString("teacher");
                     row[5] = prs.getString("day");
                     row[6] = prs.getString("room");
-                    timetableRows.add(row);
+                    
+                    if(row[3].split(" ").length > 1 && row[3].split(" ")[1].equals("Exam")){
+                        examTableRows.add(row);
+                    }
+                    else{
+                        timetableRows.add(row);
+                    }
                 }
                 
-                if (timetableRows.isEmpty())
+                if (timetableRows.isEmpty() && examTableRows.isEmpty())
                 {
                     Logger.getLogger(ExportTimetable.class.getName()).log(Level.SEVERE, new StringBuilder().append("No timetable available for group ").append(group).toString());
                     continue;
                 }
                 
                 StringBuilder html = new StringBuilder();
-                html.append("<table style=\"border-collapse: collapse; width: 100%;\">");
-                html.append("<thead style=\"background-color: #f2f2f2;\">");
-                html.append("<tr>");
-                for (String header : headers)
-                {
-                    html.append("<th style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">").append(header).append("</th>");
-                }
-                html.append("</tr></thead>");
                 
-                html.append("<tbody>");
-                for (String[] row : timetableRows) {
+                if(!timetableRows.isEmpty()){
+                    html.append("<table style=\"border-collapse: collapse; width: 100%;\">");
+                    html.append("<thead style=\"background-color: #9d9af5;\">");
                     html.append("<tr>");
-                    for (String cell : row) {
-                        html.append("<td style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">").append(cell).append("</td>");
+                    for (String header : headers)
+                    {
+                        html.append("<th style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">").append(header).append("</th>");
                     }
-                    html.append("</tr>");
+                    html.append("</tr></thead>");
+
+                    html.append("<tbody>");
+                    for (String[] row : timetableRows) {
+                        html.append("<tr>");
+                        for (String cell : row) {
+                            html.append("<td style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">").append(cell).append("</td>");
+                        }
+                        html.append("</tr>");
+                    }
+                    html.append("</tbody>");
+                    html.append("</table>");
+
+                    html.append("<br>");
                 }
-                html.append("</tbody>");
-                html.append("</table>");
+                
+                if(!examTableRows.isEmpty()){
+                    html.append("<table style=\"border-collapse: collapse; width: 100%;\">");
+                    html.append("<thead style=\"background-color: #fafa6e;\">");
+                    html.append("<tr>");
+                    for (String header : headers)
+                    {
+                        html.append("<th style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">").append(header).append("</th>");
+                    }
+                    html.append("</tr></thead>");
+
+                    html.append("<tbody>");
+                    for (String[] row : examTableRows) {
+                        html.append("<tr>");
+                        for (String cell : row) {
+                            html.append("<td style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">").append(cell).append("</td>");
+                        }
+                        html.append("</tr>");
+                    }
+                    html.append("</tbody>");
+                    html.append("</table>");
+                }
+                
                 
                 URL url = ClassLoader.getSystemResource("resources/" + group + ".html");
                 if (url == null)
