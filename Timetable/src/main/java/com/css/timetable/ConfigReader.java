@@ -49,4 +49,8 @@ public class ConfigReader {
     {
         return properties.getProperty(key);
     }
+
+    public void getProperty() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -13,4 +13,6 @@ com\css\timetable\export\ExportTimetable.class
 com\css\timetable\setup\DatabaseSetup.class
 com\css\timetable\TimetableUI$5.class
 com\css\timetable\TimetableUI$1.class
+com\css\timetable\TimetableUI$10.class
+.netbeans_automatic_build
 com\css\timetable\JDBCConnection.class
