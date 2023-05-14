@@ -91,7 +91,7 @@ public class ExportTimetable {
                     }
                     html.append("</tr></thead>");
 
-                    html.append("<tbody>");
+                    html.append("<tbody id=\"timetable\">");
                     for (String[] row : timetableRows) {
                         html.append("<tr>");
                         for (String cell : row) {
@@ -106,7 +106,7 @@ public class ExportTimetable {
                 }
                 
                 if(!examTableRows.isEmpty()){
-                    html.append("<table style=\"border-collapse: collapse; width: 100%;\">");
+                    html.append("<table id=\"examtable\" style=\"border-collapse: collapse; width: 100%;\">");
                     html.append("<thead style=\"background-color: #fafa6e;\">");
                     html.append("<tr>");
                     for (String header : headers)
