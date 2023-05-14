@@ -822,8 +822,8 @@ public class TimetableUI extends javax.swing.JFrame {
         return registrationsNumber;
     }
 
-    //functie pentru a lua inregistrarile anterioare din tabel
-    private RegistrationTimetable[] getRegistrationsFromDatabase() {
+    //methods for taking all the registrations from database
+    public RegistrationTimetable[] getRegistrationsFromDatabase() {
 
         //vector folosit pentru vechile inregistrari
         int registrationsNumber = 0;
@@ -874,7 +874,7 @@ public class TimetableUI extends javax.swing.JFrame {
     }
 
     //functie pentru constrangerea: un curs este inclus total temporal in celalalt
-    private boolean isCourseNotTotallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
+    public boolean isCourseNotTotallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
 
         boolean ok = true;
 
@@ -898,7 +898,7 @@ public class TimetableUI extends javax.swing.JFrame {
     }
 
     //functie pentru constrangerea://cursul nou incepe/ se termina in timpul altui curs 
-    private boolean isCourseNotPartiallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
+    public boolean isCourseNotPartiallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
         boolean ok = true;
 
         if ( //cursul nou incepe in timpul altui curs 
@@ -920,7 +920,7 @@ public class TimetableUI extends javax.swing.JFrame {
 
     }
     
-    private boolean hasValidDate(RegistrationTimetable reg){
+    public boolean hasValidDate(RegistrationTimetable reg){
         String day = reg.getDay();
         String[] dayItems = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         List<String> weekDays = new ArrayList<>();
@@ -947,7 +947,7 @@ public class TimetableUI extends javax.swing.JFrame {
     }
     
 
-    private boolean sameCourseOnceAWeek(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
+    public boolean sameCourseOnceAWeek(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
 
         boolean ok = true;
 
@@ -961,7 +961,7 @@ public class TimetableUI extends javax.swing.JFrame {
         return ok;
     }
 
-    private boolean isViableForInsert(RegistrationTimetable newReg) {
+    public boolean isViableForInsert(RegistrationTimetable newReg) {
 
         boolean ok = true;
         

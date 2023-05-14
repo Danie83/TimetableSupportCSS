@@ -1,2 +1,6 @@
+unit_tests\DatabaseSetupTest.class
 unit_tests\JDBCConnectionTest.class
+unit_tests\ExportTimetableTests.class
+unit_tests\RegistrationTimetableTests.class
+unit_tests\TimetableUITest.class
 unit_tests\ConfigReaderTests.class

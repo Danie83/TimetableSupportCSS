@@ -11,6 +11,22 @@ package com.css.timetable;
 public class RegistrationTimetable {
     private int startHour, endHour;
     private String room, day, course, courseType, groupName, teacher;
+    
+   public RegistrationTimetable(){
+       
+   }
+    
+    public RegistrationTimetable(int startH, int endH, String room, String day, String course, String courseType, String groupName, String teacher){
+        this.startHour = startH;
+        this.endHour = endH;
+        this.room = room;
+        this.day = day;
+        this.course = course;
+        this.courseType = courseType;
+        this.groupName = groupName;
+        this.teacher = teacher;
+    }
+    
 
     /**
      * @return the day
