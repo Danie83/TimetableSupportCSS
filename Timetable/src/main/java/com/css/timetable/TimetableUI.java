@@ -793,7 +793,7 @@ public class TimetableUI extends javax.swing.JFrame {
     }//GEN-LAST:event_groupComboBoxActionPerformed
 
     //function for seeing if class and the room are suitable
-    private boolean isRoomSuitable(String newType, String newRoom) {
+    public boolean isRoomSuitable(String newType, String newRoom) {
         boolean ok = true;
         if ((newType == "Course" && newRoom.charAt(0) != 'C')
                 || (newType == "Laboratory" && newRoom.charAt(0) != 'L')) {
@@ -803,7 +803,7 @@ public class TimetableUI extends javax.swing.JFrame {
     }
 
     //functie prin care iau numarul de inregistrari anterioare
-    private Integer getRegistrationsNumber() {
+    public Integer getRegistrationsNumber() {
         //vector folosit pentru vechile inregistrari
         int registrationsNumber = 0;
         RegistrationTimetable registrations[] = null;

@@ -13,12 +13,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import java.sql.SQLException;
+import java.sql.Statement;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.mockito.MockitoAnnotations;
 
 public class TimetableUITest {
     @Test
     public void testPopulateExamTable() throws SQLException {
-       JDBCConnection jdbcConnectionMock = Mockito.mock(JDBCConnection.class);
+        JDBCConnection jdbcConnectionMock = Mockito.mock(JDBCConnection.class);
         Connection connectionMock = Mockito.mock(Connection.class);
         PreparedStatement preparedStatementMock = Mockito.mock(PreparedStatement.class);
         ResultSet resultSetMock = Mockito.mock(ResultSet.class);
@@ -55,4 +59,68 @@ public class TimetableUITest {
         // Verify that the table model was set with the expected data
         Assertions.assertEquals(0, timetableUI.jTable2.getRowCount());
     }
+    
+    /*CONSTRAINTS TESTS*/
+    //Room suitable
+    
+    @Test
+    public void testSuitableCourseRoom() {
+        // Create an instance of the class under test and inject the mocks
+        TimetableUI timetableUI = new TimetableUI();
+        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+        
+        
+        String type = "Course";
+        String room = "C1";
+        boolean result = timetableUI.isRoomSuitable(type, room);
+        assertTrue(result);
+        
+    }
+    
+    @Test
+    public void testUnsuitableCourseRoom() {
+        // Create an instance of the class under test and inject the mocks
+        TimetableUI timetableUI = new TimetableUI();
+        MockitoAnnotations.openMocks(this); 
+        
+        String type = "Course";
+        String room = "L1";
+        boolean result = timetableUI.isRoomSuitable(type, room);
+        assertFalse(result);
+    }
+    
+    @Test
+    public void testSuitableLabRoom() {
+        TimetableUI timetableUI = new TimetableUI();
+        MockitoAnnotations.openMocks(this); 
+        String type = "Laboratory";
+        String room = "L2";
+        boolean result = timetableUI.isRoomSuitable(type, room);
+        assertTrue(result);
+    }
+    
+    @Test
+    public void testUnsuitableLabRoom() {
+        TimetableUI timetableUI = new TimetableUI();
+        MockitoAnnotations.openMocks(this); 
+        String type = "Laboratory";
+        String room = "C1";
+        boolean result = timetableUI.isRoomSuitable(type, room);
+        assertFalse(result);
+    }
+    
+    
+    //THIS TEST IS SUPPOSED TO FAIL. IF YOU WANT JUST PASSED TESTS, COMMENT THIS FUNCTION
+//    @Test
+//    public void testUnsuitableCourseRoomFailingTest() {
+//        // Create an instance of the class under test and inject the mocks
+//        TimetableUI timetableUI = new TimetableUI();
+//        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+//        
+//        String type = "Course";
+//        String room = "C1";
+//        boolean result = timetableUI.isRoomSuitable(type, room);
+//        assertFalse(result);
+//    }
+    
 }
