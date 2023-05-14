@@ -1245,8 +1245,8 @@ public class TimetableUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
+    public javax.swing.JTable jTable1;
+    public javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JButton removeItem;
     private javax.swing.JComboBox<String> roomComboBox;
@@ -1257,4 +1257,5 @@ public class TimetableUI extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> timeSlotStartComboBox;
     private javax.swing.JComboBox<String> yearComboBox;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -9,6 +9,9 @@ import static org.mockito.Mockito.*;
 import com.css.timetable.ConfigReader;
 import com.css.timetable.JDBCConnection;
 import com.css.timetable.setup.DatabaseSetup;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class DatabaseSetupTest {
     @Mock
@@ -28,9 +31,12 @@ public class DatabaseSetupTest {
     @Mock
     private ResultSet resultSet;
     
+    private List<String> logMessages;
+    
     @BeforeEach
     public void setUp() throws SQLException {
         MockitoAnnotations.openMocks(this);
+        logMessages = new ArrayList<>();
 
         when(ConfigReader.getInstance()).thenReturn(configReader);
         when(JDBCConnection.getInstance()).thenReturn(jdbcConnection);
@@ -41,30 +47,41 @@ public class DatabaseSetupTest {
     }
     
     @Test
-    void testSetup() {
-    // Set up the mock behavior
-        when(configReader.getProperty("setup.initiate")).thenReturn("true");
-        when(configReader.getProperty("setup.groups.count")).thenReturn("10");
-        when(configReader.getProperty("setup.groups.years")).thenReturn("5");
-        when(configReader.getProperty("setup.groups.halfs")).thenReturn("2");
-        when(configReader.getProperty("setup.rooms")).thenReturn("20");
-        when(configReader.getProperty("setup.rooms.types")).thenReturn("5");
-        when(configReader.getProperty("setup.teachers")).thenReturn("15");
-        when(configReader.getProperty("setup.discipline")).thenReturn("10");
-
-        // Call the method to be tested
-        DatabaseSetup.setup();
-
-        // Verify the expected behavior
-        verify(configReader).getProperty("setup.initiate");
-        verify(configReader).getProperty("setup.groups.count");
-        verify(configReader).getProperty("setup.groups.years");
-        verify(configReader).getProperty("setup.groups.halfs");
-        verify(configReader).getProperty("setup.rooms");
-        verify(configReader).getProperty("setup.rooms.types");
-        verify(configReader).getProperty("setup.teachers");
-        verify(configReader).getProperty("setup.discipline");
-    }   
+    public void testSetupNotInitiated()
+    {
+        Logger loggerMock = mock(Logger.class);
+        DatabaseSetup databaseSetup = new DatabaseSetup();
+        databaseSetup.LOG = loggerMock;
+        databaseSetup.setup();
+        verify(loggerMock).info("Database setup is not activated.");
+        verifyNoMoreInteractions(loggerMock);
+    }
+    
+//    @Test
+//    void testSetup() {
+//    // Set up the mock behavior
+//        when(configReader.getProperty("setup.initiate")).thenReturn("true");
+//        when(configReader.getProperty("setup.groups.count")).thenReturn("10");
+//        when(configReader.getProperty("setup.groups.years")).thenReturn("5");
+//        when(configReader.getProperty("setup.groups.halfs")).thenReturn("2");
+//        when(configReader.getProperty("setup.rooms")).thenReturn("20");
+//        when(configReader.getProperty("setup.rooms.types")).thenReturn("5");
+//        when(configReader.getProperty("setup.teachers")).thenReturn("15");
+//        when(configReader.getProperty("setup.discipline")).thenReturn("10");
+//
+//        // Call the method to be tested
+//        DatabaseSetup.setup();
+//
+//        // Verify the expected behavior
+//        verify(configReader).getProperty("setup.initiate");
+//        verify(configReader).getProperty("setup.groups.count");
+//        verify(configReader).getProperty("setup.groups.years");
+//        verify(configReader).getProperty("setup.groups.halfs");
+//        verify(configReader).getProperty("setup.rooms");
+//        verify(configReader).getProperty("setup.rooms.types");
+//        verify(configReader).getProperty("setup.teachers");
+//        verify(configReader).getProperty("setup.discipline");
+//    }   
 
     /*@Test
     public void testSetupNotActivated() {

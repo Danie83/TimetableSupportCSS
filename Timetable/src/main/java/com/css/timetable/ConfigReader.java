@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public class ConfigReader {
     
-    private static final String RESOURCE_FILE = "config.properties";
+    private static String RESOURCE_FILE = "config.properties";
     private static ConfigReader instance = null;
     private Properties properties;
     
@@ -49,8 +49,8 @@ public class ConfigReader {
     {
         return properties.getProperty(key);
     }
-
-    public void getProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    public void setProperty(String key, String value) {
+        properties.setProperty(key, value);
     }
 }

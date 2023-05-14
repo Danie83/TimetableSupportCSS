@@ -17,17 +17,23 @@ import java.util.logging.Logger;
 
 public class DatabaseSetup 
 {
-    private static Logger LOG = Logger.getLogger(DatabaseSetup.class.getName());
+    public static Logger LOG = Logger.getLogger(DatabaseSetup.class.getName());
+    
+    public static ConfigReader config = ConfigReader.getInstance();
     
     public static void setup()
     {
-        ConfigReader config = ConfigReader.getInstance();
         String check = config.getProperty("setup.initiate");
         if (!Boolean.parseBoolean(check))
         {
             LOG.info("Database setup is not activated.");
             return;
         }
+        else
+        {
+            LOG.info("Database setup is activated.");
+        }
+        
         String groupCount = config.getProperty("setup.groups.count");
         String groupYears = config.getProperty("setup.groups.years");
         String groupHalfs = config.getProperty("setup.groups.halfs");
