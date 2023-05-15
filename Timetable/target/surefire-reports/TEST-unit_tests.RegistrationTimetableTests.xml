@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="2" failures="0" name="unit_tests.JDBCConnectionTest" time="0" errors="0" skipped="0">
+<testsuite tests="17" failures="0" name="unit_tests.RegistrationTimetableTests" time="0.004" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="java.vm.version" value="14.0.1+7"/>
@@ -60,6 +60,21 @@
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="unit_tests.JDBCConnectionTest" name="unit_tests.JDBCConnectionTest.testConnectionJDBCConnectionNotNull" time="0"/>
-  <testcase classname="unit_tests.JDBCConnectionTest" name="unit_tests.JDBCConnectionTest.testGetInstanceJDBCConnection" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testGetStartHour" time="0.004"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testGetEndHour" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testSetEndHour" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testSetCourseType" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testSetRoom" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testSetCourse" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testGetCourse" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testGetGroupName" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testGetRoom" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testGetTeacher" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testSetTeacher" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testSetGroupName" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testSetStartHour" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testSetDay" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testToString" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testGetDay" time="0"/>
+  <testcase classname="unit_tests.RegistrationTimetableTests" name="unit_tests.RegistrationTimetableTests.testGetCourseType" time="0"/>
 </testsuite>

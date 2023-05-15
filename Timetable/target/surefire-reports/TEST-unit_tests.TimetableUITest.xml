@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="10" failures="0" name="unit_tests.TimetableUITest" time="2.297" errors="0" skipped="0">
+<testsuite tests="18" failures="0" name="unit_tests.TimetableUITest" time="1.368" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="java.vm.version" value="14.0.1+7"/>
@@ -14,7 +14,7 @@
     <property name="user.script" value=""/>
     <property name="user.country" value="RO"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
-    <property name="test" value="unit_tests.TimetableUITest"/>
+    <property name="test" value="unit_tests.ConfigReaderTests,unit_tests.DatabaseSetupTest,unit_tests.ExportTimetableTests,unit_tests.JDBCConnectionTest,unit_tests.RegistrationTimetableTests,unit_tests.TimetableUITest"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="user.dir" value="C:\Users\1\Desktop\TimetableSupportCSS\Timetable"/>
     <property name="java.vm.compressedOopsMode" value="32-bit"/>
@@ -45,7 +45,7 @@
     <property name="java.class.path" value="C:\Program Files\NetBeans-15\netbeans\java\maven\boot\plexus-classworlds-2.6.0.jar"/>
     <property name="java.vm.specification.version" value="14"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dtest=unit_tests.TimetableUITest -Dmaven.ext.class.path=C:\Program Files\NetBeans-15\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 surefire:test"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dtest=unit_tests.ConfigReaderTests,unit_tests.DatabaseSetupTest,unit_tests.ExportTimetableTests,unit_tests.JDBCConnectionTest,unit_tests.RegistrationTimetableTests,unit_tests.TimetableUITest -Dmaven.ext.class.path=C:\Program Files\NetBeans-15\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 surefire:test"/>
     <property name="java.home" value="C:\Program Files\Java\jdk-14.0.1"/>
     <property name="user.language" value="ro"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
@@ -60,14 +60,22 @@
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testHasValidDate" time="0.839"/>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testIsViableForInsert" time="0.1"/>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testSameCourseOnceAWeek" time="0.052"/>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testUnsuitableLabRoom" time="0.544"/>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testIsCourseNotTotallyOverlapped" time="0.044"/>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testIsCourseNotPartiallyOverlapped" time="0.042"/>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateExamTable" time="0.579"/>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testUnsuitableCourseRoom" time="0.031"/>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testSuitableCourseRoom" time="0.03"/>
-  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testSuitableLabRoom" time="0.036"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testHasValidDate" time="0.334"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateRoomComboBox" time="0.062"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateClassComboBox" time="0.093"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testSuitableCourseRoom" time="0.092"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateDisciplineComboBox" time="0.043"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateTimeSlotStartComboBox" time="0.088"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateTimeSlotEndComboBox" time="0.031"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateYearComboBox" time="0.024"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testIsViableForInsert" time="0.039"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testUnsuitableLabRoom" time="0.025"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateGroupComboBox" time="0.028"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testIsCourseNotTotallyOverlapped" time="0.077"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateExamTable" time="0.28"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testSuitableLabRoom" time="0.024"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testSameCourseOnceAWeek" time="0.029"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testIsCourseNotPartiallyOverlapped" time="0.023"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testPopulateDayComboBox" time="0.027"/>
+  <testcase classname="unit_tests.TimetableUITest" name="unit_tests.TimetableUITest.testUpdateTeacherComboBox" time="0.049"/>
 </testsuite>

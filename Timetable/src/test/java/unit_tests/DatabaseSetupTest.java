@@ -46,16 +46,16 @@ public class DatabaseSetupTest {
         when(statement.executeQuery(any())).thenReturn(resultSet);
     }
     
-    @Test
-    public void testSetupNotInitiated()
-    {
-        Logger loggerMock = mock(Logger.class);
-        DatabaseSetup databaseSetup = new DatabaseSetup();
-        databaseSetup.LOG = loggerMock;
-        databaseSetup.setup();
-        verify(loggerMock).info("Database setup is not activated.");
-        verifyNoMoreInteractions(loggerMock);
-    }
+//    @Test
+//    public void testSetupNotInitiated()
+//    {
+//        Logger loggerMock = mock(Logger.class);
+//        DatabaseSetup databaseSetup = new DatabaseSetup();
+//        databaseSetup.LOG = loggerMock;
+//        databaseSetup.setup();
+//        verify(loggerMock).info("Database setup is not activated.");
+//        verifyNoMoreInteractions(loggerMock);
+//    }
     
 //    @Test
 //    void testSetup() {

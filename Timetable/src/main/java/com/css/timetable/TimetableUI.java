@@ -828,7 +828,6 @@ public class TimetableUI extends javax.swing.JFrame {
         //vector folosit pentru vechile inregistrari
         int registrationsNumber = 0;
         RegistrationTimetable registrations[] = null;
-
         //Connection to database
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
@@ -879,47 +878,28 @@ public class TimetableUI extends javax.swing.JFrame {
         boolean ok = true;
 
         if ( // un curs existent este inclus total temporal cursul nou
-                oldOne.getStartHour() >= newOne.getStartHour()
-                && oldOne.getEndHour() <= newOne.getEndHour()
-                && oldOne.getDay().equals(newOne.getDay())
-                && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
+                oldOne.getStartHour() >= newOne.getStartHour() && oldOne.getEndHour() <= newOne.getEndHour() && oldOne.getDay().equals(newOne.getDay()) && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
             ok = false;
         }
-
         if ( //un curs existent include total temporal cursul nou
-                oldOne.getStartHour() <= newOne.getStartHour()
-                && oldOne.getEndHour() >= newOne.getEndHour()
-                && oldOne.getDay().equals(newOne.getDay())
-                && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
+                oldOne.getStartHour() <= newOne.getStartHour() && oldOne.getEndHour() >= newOne.getEndHour() && oldOne.getDay().equals(newOne.getDay()) && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
             ok = false;
         }
-
         return ok;
     }
-
     //functie pentru constrangerea://cursul nou incepe/ se termina in timpul altui curs 
     public boolean isCourseNotPartiallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
         boolean ok = true;
-
         if ( //cursul nou incepe in timpul altui curs 
-                oldOne.getEndHour() > newOne.getStartHour()
-                && oldOne.getEndHour() <= newOne.getEndHour()
-                && oldOne.getDay().equals(newOne.getDay())
-                && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
+                oldOne.getEndHour() > newOne.getStartHour() && oldOne.getEndHour() <= newOne.getEndHour() && oldOne.getDay().equals(newOne.getDay()) && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
             ok = false;
         }
-
         if ( //cursul nou incepe in timpul altui curs 
-                oldOne.getStartHour() >= newOne.getStartHour()
-                && oldOne.getStartHour() < newOne.getEndHour()
-                && oldOne.getDay().equals(newOne.getDay())
-                && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
+                oldOne.getStartHour() >= newOne.getStartHour() && oldOne.getStartHour() < newOne.getEndHour() && oldOne.getDay().equals(newOne.getDay()) && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
             ok = false;
         }
         return ok;
-
     }
-    
     public boolean hasValidDate(RegistrationTimetable reg){
         String day = reg.getDay();
         String[] dayItems = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
@@ -927,7 +907,6 @@ public class TimetableUI extends javax.swing.JFrame {
         for(int i = 0; i<dayItems.length; i++){
             weekDays.add(dayItems[i]);
         }
-        
         if(weekDays.contains(day)){
             return true;
         }
@@ -945,16 +924,10 @@ public class TimetableUI extends javax.swing.JFrame {
             }
         }
     }
-    
-
     public boolean sameCourseOnceAWeek(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
-
         boolean ok = true;
-
         if (newOne.getCourseType().equals("Course")) {
-            if (oldOne.getCourseType().equals("Course")
-                    && oldOne.getCourse().equals(newOne.getCourse())
-                    && oldOne.getGroupName().charAt(0) == newOne.getGroupName().charAt(0)) {
+            if (oldOne.getCourseType().equals("Course") && oldOne.getCourse().equals(newOne.getCourse()) && oldOne.getGroupName().charAt(0) == newOne.getGroupName().charAt(0)) {
                 ok = false;
             }
         }
@@ -984,20 +957,17 @@ public class TimetableUI extends javax.swing.JFrame {
                 jTextArea1.setText("The course that you have inserted overlaps the following one: " + registrations[i].toString() + "\n The activity that you have chosen is: " + newReg.toString());
                 break;
             }
-
             if (isCourseNotPartiallyOverlapped(registrations[i], newReg) == false) {
                 ok = false;
                 jTextArea1.setText("The course that you have inserted partially overlaps the following one: " + registrations[i].toString() + "\n The activity that you have chosen is: " + newReg.toString());
                 break;
             }
-
             if (sameCourseOnceAWeek(registrations[i], newReg) == false) {
                 ok = false;
                 jTextArea1.setText("There is already a course of " + registrations[i].getCourse() + " for this year. See table for group " + registrations[i].getGroupName() + ".");
                 break;
             }
         }
-
         return ok;
     }
 
@@ -1218,6 +1188,42 @@ public class TimetableUI extends javax.swing.JFrame {
                 new TimetableUI().setVisible(true);
             }
         });
+    }
+    
+    public JComboBox<String> getTeacherComboBox() {
+        return teacherComboBox;
+    }
+
+    public JComboBox<String> getGroupComboBox() {
+        return groupComboBox;
+    } 
+
+    public JComboBox<String> getDisciplineComboBox() {
+        return disciplineComboBox;
+    }
+
+    public JComboBox<String> getClassComboBox() {
+        return classComboBox;
+    }
+
+    public JComboBox<String> getRoomComboBox() {
+        return roomComboBox;
+    }
+
+    public JComboBox<String> getTimeSlotStartComboBox() {
+        return timeSlotStartComboBox;
+    }
+
+    public JComboBox<String> getTimeSlotEndComboBox() {
+        return timeSlotEndComboBox;
+    }
+
+    public JComboBox<String> getYearComboBox() {
+        return yearComboBox;
+    }
+
+    public JComboBox<String> getDayComboBox() {
+        return dayComboBox;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

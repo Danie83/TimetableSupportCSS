@@ -114,4 +114,76 @@ public class RegistrationTimetableTests {
         assertTrue(expectedString.equals(rt.toString()));
     }
     
+    @Test
+    public void testGetDay() {
+        RegistrationTimetable rt = new RegistrationTimetable();
+        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+    
+        rt.setDay("Monday");
+        assertTrue(rt.getDay().equals("Monday"));
+    }
+    
+    @Test
+    public void testGetCourse() {
+        RegistrationTimetable rt = new RegistrationTimetable();
+        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+    
+        rt.setCourse("Matematica");
+        assertTrue(rt.getCourse().equals("Matematica"));
+    }
+    
+    @Test
+    public void testGetCourseType() {
+        RegistrationTimetable rt = new RegistrationTimetable();
+        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+    
+        rt.setCourseType("seminary");
+        assertTrue(rt.getCourseType().equals("seminary"));
+    }
+    
+    @Test
+    public void testGetGroupName() {
+        RegistrationTimetable rt = new RegistrationTimetable();
+        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+    
+        rt.setGroupName("A1");
+        assertTrue(rt.getGroupName().equals("A1"));
+    }
+    
+    @Test
+    public void testGetTeacher() {
+        RegistrationTimetable rt = new RegistrationTimetable();
+        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+    
+        rt.setTeacher("Dragos");
+        assertTrue(rt.getTeacher().equals("Dragos"));
+    }
+    
+    @Test
+    public void testGetRoom() {
+        RegistrationTimetable rt = new RegistrationTimetable();
+        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+    
+        rt.setRoom("101");
+        assertTrue(rt.getRoom().equals("101"));
+    }
+    
+    @Test
+    public void testGetStartHour() {
+        RegistrationTimetable rt = new RegistrationTimetable();
+        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+    
+        rt.setStartHour(8);
+        assertTrue(rt.getStartHour() == 8);
+    }
+    
+    @Test
+    public void testGetEndHour() {
+        RegistrationTimetable rt = new RegistrationTimetable();
+        MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
+    
+        rt.setEndHour(9);
+        assertTrue(rt.getEndHour() == 9);
+    }
+    
 }
