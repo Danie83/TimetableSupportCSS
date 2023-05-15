@@ -45,7 +45,7 @@ public class ExportTimetableTests {
     public void testTableNoInformation() throws SQLException {
         ExportTimetable.createHTML();
         
-        String filePath = "C:\\Users\\baciu\\Documents\\GitHub\\TimetableSupportCSS\\Timetable\\src\\main\\resources\\1A2.html";
+        String filePath = "C:\\Users\\baciu\\Documents\\GitHub\\TimetableSupportCSS\\Timetable\\src\\main\\resources\\1A1.html";
         File file = new File(filePath);
         assertFalse(file.exists());
     }
@@ -100,7 +100,99 @@ public class ExportTimetableTests {
         conn.close();
     }
     
+    @Test
+    public void testTableWithInformationExam() throws SQLException {
+        conn = JDBCConnection.getInstance().getConnection();
+        Statement stmt = conn.createStatement();
+        
+        stmt.execute("INSERT INTO groups (name) VALUES ('1A3')");
+        stmt.execute("INSERT INTO timetable (start_hour, end_hour, group_name, course, course_type, teacher, day, room) "
+                + "VALUES (8, 10, '1A3', 'Matematica', 'Course Exam', 'Dragos', 'Monday', '101')");
+        
+        ExportTimetable.createHTML();
+        
+        String filePath = "C:\\Users\\baciu\\Documents\\GitHub\\TimetableSupportCSS\\Timetable\\src\\main\\resources\\1A3.html";
+        try {
+            File file = new File(filePath);
+            try (Scanner scanner = new Scanner(file)) {
+                Document doc = Jsoup.parse(scanner.nextLine());
+                Elements timeTableRows = doc.select("tbody tr");
+                ArrayList<String> contents = new ArrayList<>();
+
+                System.out.println(timeTableRows);
+                assertTrue(timeTableRows.size() == 1);
+                
+                for (Element rowElement : timeTableRows) {
+                    Elements row = rowElement.select("td");
+                    
+                    for(Element cell : row) {
+                        String value = cell.text();
+                       
+                        contents.add(value);
+                    }
+                }
+                
+                assertTrue(checkIntegrityRows(contents, "8 - 10", "1A3", "Matematica", "Course Exam", "Dragos", "Monday", "101"));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        stmt.execute("DELETE FROM groups");
+        stmt.execute("DELETE FROM timetable");
+        conn.close();
+    }
     
+    @Test
+    public void testTableWithInformationWholeTable() throws SQLException {
+        conn = JDBCConnection.getInstance().getConnection();
+        Statement stmt = conn.createStatement();
+        
+        stmt.execute("INSERT INTO groups (name) VALUES ('1A4')");
+        stmt.execute("INSERT INTO timetable (start_hour, end_hour, group_name, course, course_type, teacher, day, room) "
+                + "VALUES (8, 10, '1A4', 'Matematica', 'Course Exam', 'Dragos', 'Monday', '101')");
+        stmt.execute("INSERT INTO timetable (start_hour, end_hour, group_name, course, course_type, teacher, day, room) "
+                + "VALUES (12, 14, '1A4', 'Css', 'seminary', 'Dragos', 'Tuesday', '202')");
+        
+        ExportTimetable.createHTML();
+        
+        String filePath = "C:\\Users\\baciu\\Documents\\GitHub\\TimetableSupportCSS\\Timetable\\src\\main\\resources\\1A4.html";
+        try {
+            File file = new File(filePath);
+            try (Scanner scanner = new Scanner(file)) {
+                Document doc = Jsoup.parse(scanner.nextLine());
+                Elements timeTableRows = doc.select("tbody tr");
+                ArrayList<String> contents1 = new ArrayList<>();
+                ArrayList<String> contents2 = new ArrayList<>();
+                int indexRow = 1;
+                
+                System.out.println(timeTableRows);
+                assertTrue(timeTableRows.size() == 2);
+                
+                for (Element rowElement : timeTableRows) {
+                    Elements row = rowElement.select("td");
+                    
+                    for(Element cell : row) {
+                        String value = cell.text();
+                       
+                        if (indexRow == 1) contents1.add(value);
+                        else contents2.add(value);
+                    }
+                    
+                    indexRow++;
+                }
+                
+                assertTrue(checkIntegrityRows(contents1, "12 - 14", "1A4", "Css", "seminary", "Dragos", "Tuesday", "202"));
+                assertTrue(checkIntegrityRows(contents2, "8 - 10", "1A4", "Matematica", "Course Exam", "Dragos", "Monday", "101"));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        stmt.execute("DELETE FROM groups");
+        stmt.execute("DELETE FROM timetable");
+        conn.close();
+    }
     
     public static boolean checkIntegrityRows(ArrayList<String> toBeChecked, String hours, String group_name, String course, String course_type, String teacher, String day, String room) {
         return toBeChecked.get(0).equals(hours) &&
