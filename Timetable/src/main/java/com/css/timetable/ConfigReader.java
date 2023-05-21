@@ -23,6 +23,7 @@ public class ConfigReader {
         try 
         {
             InputStream propsInput = ConfigReader.class.getClassLoader().getResourceAsStream(RESOURCE_FILE);
+            assert propsInput != null : "Failed to load resource file: " + RESOURCE_FILE;
             this.properties.load(propsInput);
         }
         catch (IOException ex) 
@@ -37,6 +38,7 @@ public class ConfigReader {
         {
             instance = new ConfigReader();
         } 
+        assert instance != null : "ConfigReader instance is null.";
         return instance;
     }
     
@@ -47,10 +49,13 @@ public class ConfigReader {
     
     public String getProperty(String key)
     {
+        assert key != null : "Key cannot be null";
         return properties.getProperty(key);
     }
     
     public void setProperty(String key, String value) {
+        assert key != null : "Key cannot be null";
+        assert value != null : "Value cannot be null";
         properties.setProperty(key, value);
     }
 }
