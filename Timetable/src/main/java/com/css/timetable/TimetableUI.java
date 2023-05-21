@@ -57,6 +57,7 @@ public class TimetableUI extends javax.swing.JFrame {
         String[] yearItems = new String[years];
         for (int i = 0; i < years; i++) {
             yearItems[i] = Integer.toString(i + 1);
+            assert yearItems[i] != null && Integer.parseInt(yearItems[i]);
         }
 
         populateYearComboBox(yearItems);
@@ -79,9 +80,11 @@ public class TimetableUI extends javax.swing.JFrame {
         List<String[]> timetable = new ArrayList<>();
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
+            assert conn != null : "Database connection is null";
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setString(1, group);
             ResultSet rs = ptmt.executeQuery();
+            assert rs != null;
             while (rs.next()) {
                 int i = 0;
                 String[] item = new String[columns.length];
@@ -95,6 +98,7 @@ public class TimetableUI extends javax.swing.JFrame {
                 item[i++] = rs.getString("room");
                 timetable.add(item);
             }
+            assert timetable.size() > 0;
         } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -102,6 +106,7 @@ public class TimetableUI extends javax.swing.JFrame {
         String[][] data = new String[timetable.size()][];
         for (int j = 0; j < timetable.size(); j++) {
             data[j] = timetable.get(j);
+            assert data[j] != null;
         }
 
         DefaultTableModel model = new DefaultTableModel(data, columns);
@@ -124,9 +129,11 @@ public class TimetableUI extends javax.swing.JFrame {
         
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
+            asser conn != null;
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setString(1, group);
             ResultSet rs = ptmt.executeQuery();
+            assert rs.size > 0;
             while (rs.next()) {
                 int i = 0;
                 String[] item = new String[columns.length];
@@ -146,6 +153,7 @@ public class TimetableUI extends javax.swing.JFrame {
                 item[i++] = rs.getString("room");
                 timetable.add(item);
             }
+            assert (totalDisciplines + totalExams) <= timetable.size();
         } catch (SQLException ex) {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -160,10 +168,12 @@ public class TimetableUI extends javax.swing.JFrame {
             if(item[4].split(" ").length > 1 && item[4].split(" ")[1].equals("Exam")){
                 dataExamtable[i] = item;
                 i++;
+                assert i <= dataExamtable.length;
             }
             else{
                 dataTimetable[ii] = item;
                 ii++;
+                assert ii <= dataTimetable.length;
             }
         }
         
@@ -196,6 +206,7 @@ public class TimetableUI extends javax.swing.JFrame {
             Connection conn = JDBCConnection.getInstance().getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
+            assert rs == null;
             while (rs.next()) {
                 groupNumber = rs.getInt("total");
             }
@@ -203,6 +214,7 @@ public class TimetableUI extends javax.swing.JFrame {
             String[] groupItems = new String[groupNumber];
             stmt = conn.createStatement();
             rs = stmt.executeQuery("SELECT name FROM groups;");
+            assert rs == null;
             while (rs.next()) {
                 groupItems[i] = rs.getString("name");
                 i++;
@@ -220,8 +232,10 @@ public class TimetableUI extends javax.swing.JFrame {
         String items[];
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
+            assert conn != null : "Database connection is null";            
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM teachers;");
+            assert rs != null;
             while (rs.next()) {
                 teachersNumber = rs.getInt("total");
             }
@@ -248,6 +262,7 @@ public class TimetableUI extends javax.swing.JFrame {
         String selectedDiscipline = (String) disciplineComboBox.getSelectedItem();
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
+            assert conn != null : "Database connection is null";            
             String sql = "SELECT first_name, last_name FROM teachers JOIN discipline ON teachers.course_id = discipline.id WHERE discipline.name = ?;";
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setString(1, selectedDiscipline);
@@ -275,6 +290,7 @@ public class TimetableUI extends javax.swing.JFrame {
         String items[];
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
+            assert conn != null : "Database connection is null";            
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM discipline;");
             while (rs.next()) {
@@ -304,7 +320,7 @@ public class TimetableUI extends javax.swing.JFrame {
         String checkDisciplinesQuery = "SELECT name FROM discipline WHERE year = ?;";
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
-
+            assert conn != null : "Database connection is null";            
             PreparedStatement ptmt1 = conn.prepareStatement("SELECT COUNT(*) AS total FROM discipline WHERE year = ?;");
             ptmt1.setInt(1, year);
             ResultSet rs1 = ptmt1.executeQuery();
@@ -338,6 +354,7 @@ public class TimetableUI extends javax.swing.JFrame {
         String items[];
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
+            assert conn != null : "Database connection is null";            
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM rooms;");
             while (rs.next()) {
@@ -368,6 +385,7 @@ public class TimetableUI extends javax.swing.JFrame {
 
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
+            assert conn != null : "Database connection is null";
             PreparedStatement ptmt = conn.prepareStatement("SELECT name FROM rooms WHERE type = ?;");
             ptmt.setString(1, selectedClass);
             ResultSet rs = ptmt.executeQuery();
@@ -423,6 +441,7 @@ public class TimetableUI extends javax.swing.JFrame {
         for (int i = startHour + 1, j = 0; i <= 20; i++, j++) {
             items[j] = String.valueOf(i);
         }
+        assert startHour < 20;
 
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         timeSlotEndComboBox.setModel(model);
@@ -811,6 +830,7 @@ public class TimetableUI extends javax.swing.JFrame {
         //Conectare la BD
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
+            assert conn != null : "Database connection is null";            
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total_regs FROM timetable;");
             while (rs.next()) {
@@ -831,6 +851,7 @@ public class TimetableUI extends javax.swing.JFrame {
         //Connection to database
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
+            assert conn != null : "Database connection is null";            
             registrationsNumber = getRegistrationsNumber();
 
             registrations = new RegistrationTimetable[registrationsNumber];
@@ -1017,6 +1038,7 @@ public class TimetableUI extends javax.swing.JFrame {
                 try {
                     int groupNumber = 0;
                     Connection conn = JDBCConnection.getInstance().getConnection();
+                    assert conn != null : "Database connection is null";                    
                     Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
                     while (rs.next()) {
@@ -1042,6 +1064,7 @@ public class TimetableUI extends javax.swing.JFrame {
                             jTextArea1.setText("The activity was registered.");
                         }
                     }
+                    assert jTextArea1.getText() != null;
                 } catch (SQLException ex) {
                     Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1063,6 +1086,7 @@ public class TimetableUI extends javax.swing.JFrame {
                 } catch (SQLException ex) {
                     Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                assert jTextArea1.getText() != null;
             }
         }
         
@@ -1131,6 +1155,7 @@ public class TimetableUI extends javax.swing.JFrame {
             String value = refTable.getValueAt(selectedRowIndex, 0).toString();
             
             Connection conn = JDBCConnection.getInstance().getConnection();
+            assert conn != null : "Database connection is null";
             String sql = "DELETE FROM timetable WHERE id = ?";
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setInt(1, Integer.parseInt(value));
