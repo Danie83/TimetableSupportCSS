@@ -28,10 +28,12 @@ public class JDBCConnection {
         {
             System.out.println("Database Connection Creation Failed : " + ex.getMessage());
         }
+        assert this.connection != null : "Connection failed to initialize";
     }
 
     public Connection getConnection()
     {
+        assert this.connection != null : "Connection is null";
         return connection;
     }
 
@@ -45,6 +47,8 @@ public class JDBCConnection {
         {
             instance = new JDBCConnection();
         }
+        assert instance != null : "Instance is null";
+        assert !instance.getConnection().isClosed() : "Connection is closed";
 
         return instance;
     }
