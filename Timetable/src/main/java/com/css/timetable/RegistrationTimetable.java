@@ -4,6 +4,8 @@
  */
 package com.css.timetable;
 
+import java.util.Properties;
+
 /**
  *
  * @author 1
@@ -12,9 +14,7 @@ public class RegistrationTimetable {
     private int startHour, endHour;
     private String room, day, course, courseType, groupName, teacher;
     
-   public RegistrationTimetable(){
-       
-   }
+    public RegistrationTimetable(){}
     
     public RegistrationTimetable(int startH, int endH, String room, String day, String course, String courseType, String groupName, String teacher){
         this.startHour = startH;
@@ -39,6 +39,7 @@ public class RegistrationTimetable {
      * @param day the day to set
      */
     public void setDay(String day) {
+        assert day != null : "Day must not be null";
         this.day = day;
     }
 
@@ -53,6 +54,7 @@ public class RegistrationTimetable {
      * @param course the course to set
      */
     public void setCourse(String course) {
+        assert course != null : "Course must not be null";
         this.course = course;
     }
 
@@ -67,6 +69,7 @@ public class RegistrationTimetable {
      * @param courseType the courseType to set
      */
     public void setCourseType(String courseType) {
+        assert courseType != null : "Course type must not be null";
         this.courseType = courseType;
     }
 
@@ -81,6 +84,7 @@ public class RegistrationTimetable {
      * @param groupName the groupName to set
      */
     public void setGroupName(String groupName) {
+        assert groupName != null : "Group name must not be null";
         this.groupName = groupName;
     }
 
@@ -95,6 +99,7 @@ public class RegistrationTimetable {
      * @param teacher the teacher to set
      */
     public void setTeacher(String teacher) {
+        assert teacher != null : "Teacher must not be null";
         this.teacher = teacher;
     }
 
@@ -109,6 +114,7 @@ public class RegistrationTimetable {
      * @param room the room to set
      */
     public void setRoom(String room) {
+        assert room != null : "Room must not be null";
         this.room = room;
     }
 
@@ -123,6 +129,7 @@ public class RegistrationTimetable {
      * @param starHour the starHour to set
      */
     public void setStartHour(int starHour) {
+        assert starHour < 8 && starHour > 18 : "Start hour must have the value between 8 and 16";
         this.startHour = starHour;
     }
 
@@ -137,6 +144,7 @@ public class RegistrationTimetable {
      * @param endHour the endHour to set
      */
     public void setEndHour(int endHour) {
+        assert endHour < 9 && endHour > 20: "End hour must have the value between 9 and 20";
         this.endHour = endHour;
     }
 
