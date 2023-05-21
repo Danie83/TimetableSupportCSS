@@ -53,11 +53,24 @@ public class DatabaseSetup
             return;
         }
         
+        assert groupCount != null : "Database setup config is not complete!";
+        assert groupYears != null : "Database setup config is not complete!";
+        assert groupHalfs != null : "Database setup config is not complete!";
+        assert rooms != null : "Database setup config is not complete!";
+        assert roomTypes != null : "Database setup config is not complete!";
+        assert teachers != null : "Database setup config is not complete!";
+        assert disciplines != null : "Database setup config is not complete!";
+        
         if (teachers.split(",").length != disciplines.split(",").length)
         {
             LOG.severe("Setup teachers and disciplines config do not match!");
             return;
         }
+        
+        int numTeachers = teachers.split(",").length;
+        int numDisciplines = disciplines.split(",").length;
+        assert numTeachers == numDisciplines : "Setup teachers and disciplines config do not match!";
+
         
         String[] separateRoomTypes = roomTypes.split(",");
         int sumRoomTypes = Arrays.stream(separateRoomTypes)
@@ -69,6 +82,8 @@ public class DatabaseSetup
             return;
         }
         
+        assert sumRoomTypes == 100 : "Setup room types are not evenly distributed";
+        
         String[] separateDisciplines = disciplines.split(",");
         boolean isInvalidDiscipline = Arrays.stream(separateDisciplines)
                                           .map(string -> string.split("-"))
@@ -78,6 +93,8 @@ public class DatabaseSetup
             LOG.severe("Setup discipline for year that doesn't exist!");
             return;
         }
+        
+        assert !isInvalidDiscipline : "Setup discipline for year that doesn't exist!";
             
         try 
         {
