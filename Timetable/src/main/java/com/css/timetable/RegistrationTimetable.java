@@ -4,8 +4,6 @@
  */
 package com.css.timetable;
 
-import java.util.Properties;
-
 /**
  *
  * @author 1
