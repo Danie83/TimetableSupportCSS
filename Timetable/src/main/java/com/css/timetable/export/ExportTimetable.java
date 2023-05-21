@@ -37,6 +37,7 @@ public class ExportTimetable {
                 groupNames.add(rs.getString("name"));
             }
             
+            assert groupNames != null : "Group names list is null";
             for (String group : groupNames)
             {
                 PreparedStatement ptmt = conn.prepareStatement("SELECT *, "
@@ -54,6 +55,7 @@ public class ExportTimetable {
                 List<String[]> timetableRows = new ArrayList<>();
                 List<String[]> examTableRows = new ArrayList<>();
                 
+                assert headers.length == 7 : "Invalid number of headers";
                 while (prs.next())
                 {
                     String[] row = new String[headers.length];
@@ -78,6 +80,8 @@ public class ExportTimetable {
                     Logger.getLogger(ExportTimetable.class.getName()).log(Level.SEVERE, new StringBuilder().append("No timetable available for group ").append(group).toString());
                     continue;
                 }
+                
+                assert !timetableRows.isEmpty() || !examTableRows.isEmpty() : "No timetable or exam data for group " + group;
                 
                 StringBuilder html = new StringBuilder();
                 
@@ -117,6 +121,8 @@ public class ExportTimetable {
 
                     html.append("<tbody>");
                     for (String[] row : examTableRows) {
+                        // start and end hour are 2 separate columns, and the id => row.length - 2
+                        assert row.length - 2 == headers.length : "Invalid number of columns in examTableRows";
                         html.append("<tr>");
                         for (String cell : row) {
                             html.append("<td style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">").append(cell).append("</td>");
