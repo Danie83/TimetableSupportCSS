@@ -171,9 +171,9 @@ public class TimetableUI extends javax.swing.JFrame {
                 assert i <= dataExamtable.length;
             }
             else{
+                assert ii <= dataTimetable.length;
                 dataTimetable[ii] = item;
                 ii++;
-                assert ii <= dataTimetable.length;
             }
         }
         
@@ -216,6 +216,7 @@ public class TimetableUI extends javax.swing.JFrame {
             rs = stmt.executeQuery("SELECT name FROM groups;");
             assert rs != null;
             while (rs.next()) {
+                assert i <= groupItems.length;
                 groupItems[i] = rs.getString("name");
                 i++;
             }
@@ -247,6 +248,7 @@ public class TimetableUI extends javax.swing.JFrame {
             while (rs.next()) {
                 String last_name = rs.getString("last_name");
                 String first_name = rs.getString("first_name");
+                assert i <= items.length;
                 items[i] = new StringBuilder().append(last_name).append(" ").append(first_name).toString();
                 i++;
             }
@@ -303,6 +305,7 @@ public class TimetableUI extends javax.swing.JFrame {
             rs = stmt.executeQuery("SELECT name FROM discipline;");
             while (rs.next()) {
                 String name = rs.getString("name");
+                assert i <= items.length;
                 items[i] = new StringBuilder().append(name).toString();
                 i++;
             }
@@ -333,6 +336,7 @@ public class TimetableUI extends javax.swing.JFrame {
             int i = 0;
             while (rs.next()) {
                 rs.getString("name");
+                assert i <= items.length;
                 items[i++] = rs.getString("name");
             }
             DefaultComboBoxModel model = new DefaultComboBoxModel(items);
@@ -367,6 +371,7 @@ public class TimetableUI extends javax.swing.JFrame {
             rs = stmt.executeQuery("SELECT name FROM rooms;");
             while (rs.next()) {
                 String name = rs.getString("name");
+                assert i <= items.length;
                 items[i] = new StringBuilder().append(name).toString();
                 i++;
             }
@@ -420,6 +425,7 @@ public class TimetableUI extends javax.swing.JFrame {
         timeSlotStartComboBox.setModel(model);
         for (int i = 0; i < timeSlotStartComboBox.getItemCount(); i++) {
             Object item = timeSlotStartComboBox.getItemAt(i);
+            assert item != null;
             if (item != null && item.toString().equals(selectedItem.toString())) {
                 timeSlotStartComboBox.setSelectedItem(selectedItem.toString());
                 break;

@@ -12,16 +12,7 @@ public class Timetable {
 
     public static void main(String[] args) throws SQLException {
         DatabaseSetup.setup();
-        
-//        JDBCConnection conn = JDBCConnection.getInstance();
-//        ConfigReader cr = ConfigReader.getInstance();
-//        Properties p = cr.getProperties();
-//        System.out.println(p.getProperty("database.url"));
-//        System.out.println(cr.getProperty("database.url"));
-        
         JFrame frame = new TimetableUI();
-        //frame.setSize(800, 750);
-        //frame.setResizable(false);
         frame.setVisible(true);
     }
 }
