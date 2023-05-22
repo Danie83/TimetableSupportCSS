@@ -57,7 +57,7 @@ public class TimetableUI extends javax.swing.JFrame {
         String[] yearItems = new String[years];
         for (int i = 0; i < years; i++) {
             yearItems[i] = Integer.toString(i + 1);
-            assert yearItems[i] != null && Integer.parseInt(yearItems[i]);
+            assert yearItems[i] != null && Integer.parseInt(yearItems[i]) > 0;
         }
 
         populateYearComboBox(yearItems);
@@ -129,11 +129,11 @@ public class TimetableUI extends javax.swing.JFrame {
         
         try {
             Connection conn = JDBCConnection.getInstance().getConnection();
-            asser conn != null;
+            assert conn != null;
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setString(1, group);
             ResultSet rs = ptmt.executeQuery();
-            assert rs.size > 0;
+            //assert rs.size() > 0;
             while (rs.next()) {
                 int i = 0;
                 String[] item = new String[columns.length];
@@ -206,7 +206,7 @@ public class TimetableUI extends javax.swing.JFrame {
             Connection conn = JDBCConnection.getInstance().getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
-            assert rs == null;
+            assert rs != null;
             while (rs.next()) {
                 groupNumber = rs.getInt("total");
             }
@@ -214,7 +214,7 @@ public class TimetableUI extends javax.swing.JFrame {
             String[] groupItems = new String[groupNumber];
             stmt = conn.createStatement();
             rs = stmt.executeQuery("SELECT name FROM groups;");
-            assert rs == null;
+            assert rs != null;
             while (rs.next()) {
                 groupItems[i] = rs.getString("name");
                 i++;

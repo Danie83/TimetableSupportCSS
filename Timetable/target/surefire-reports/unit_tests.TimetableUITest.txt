@@ -1,4 +1,109 @@
 -------------------------------------------------------------------------------
 Test set: unit_tests.TimetableUITest
 -------------------------------------------------------------------------------
-Tests run: 18, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.374 sec
+Tests run: 18, Failures: 18, Errors: 0, Skipped: 0, Time elapsed: 1.363 sec <<< FAILURE!
+unit_tests.TimetableUITest.testHasValidDate()  Time elapsed: 0.496 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testHasValidDate(TimetableUITest.java:216)
+
+unit_tests.TimetableUITest.testSuitableCourseRoom()  Time elapsed: 0.049 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testSuitableCourseRoom(TimetableUITest.java:61)
+
+unit_tests.TimetableUITest.testSuitableLabRoom()  Time elapsed: 0.052 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testSuitableLabRoom(TimetableUITest.java:71)
+
+unit_tests.TimetableUITest.testIsCourseNotPartiallyOverlapped()  Time elapsed: 0.001 sec  <<< FAILURE!
+java.lang.AssertionError: Start hour must have the value between 8 and 16
+	at com.css.timetable.RegistrationTimetable.setStartHour(RegistrationTimetable.java:130)
+	at unit_tests.TimetableUITest.testIsCourseNotPartiallyOverlapped(TimetableUITest.java:146)
+
+unit_tests.TimetableUITest.testIsCourseNotTotallyOverlapped()  Time elapsed: 0 sec  <<< FAILURE!
+java.lang.AssertionError: Start hour must have the value between 8 and 16
+	at com.css.timetable.RegistrationTimetable.setStartHour(RegistrationTimetable.java:130)
+	at unit_tests.TimetableUITest.testIsCourseNotTotallyOverlapped(TimetableUITest.java:93)
+
+unit_tests.TimetableUITest.testPopulateTimeSlotEndComboBox()  Time elapsed: 0.036 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testPopulateTimeSlotEndComboBox(TimetableUITest.java:482)
+
+unit_tests.TimetableUITest.testIsViableForInsert()  Time elapsed: 0.035 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testIsViableForInsert(TimetableUITest.java:268)
+
+unit_tests.TimetableUITest.testPopulateTimeSlotStartComboBox()  Time elapsed: 0.038 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testPopulateTimeSlotStartComboBox(TimetableUITest.java:461)
+
+unit_tests.TimetableUITest.testSameCourseOnceAWeek()  Time elapsed: 0.001 sec  <<< FAILURE!
+java.lang.AssertionError: Start hour must have the value between 8 and 16
+	at com.css.timetable.RegistrationTimetable.setStartHour(RegistrationTimetable.java:130)
+	at unit_tests.TimetableUITest.testSameCourseOnceAWeek(TimetableUITest.java:239)
+
+unit_tests.TimetableUITest.testPopulateExamTable()  Time elapsed: 0.42 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testPopulateExamTable(TimetableUITest.java:51)
+
+unit_tests.TimetableUITest.testPopulateYearComboBox()  Time elapsed: 0.032 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testPopulateYearComboBox(TimetableUITest.java:505)
+
+unit_tests.TimetableUITest.testUpdateTeacherComboBox()  Time elapsed: 0.03 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testUpdateTeacherComboBox(TimetableUITest.java:537)
+
+unit_tests.TimetableUITest.testUnsuitableLabRoom()  Time elapsed: 0.03 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testUnsuitableLabRoom(TimetableUITest.java:81)
+
+unit_tests.TimetableUITest.testPopulateDayComboBox()  Time elapsed: 0.031 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testPopulateDayComboBox(TimetableUITest.java:521)
+
+unit_tests.TimetableUITest.testPopulateGroupComboBox()  Time elapsed: 0.031 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testPopulateGroupComboBox(TimetableUITest.java:372)
+
+unit_tests.TimetableUITest.testPopulateDisciplineComboBox()  Time elapsed: 0.026 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testPopulateDisciplineComboBox(TimetableUITest.java:391)
+
+unit_tests.TimetableUITest.testPopulateClassComboBox()  Time elapsed: 0.024 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testPopulateClassComboBox(TimetableUITest.java:410)
+
+unit_tests.TimetableUITest.testPopulateRoomComboBox()  Time elapsed: 0.029 sec  <<< FAILURE!
+java.lang.AssertionError
+	at com.css.timetable.TimetableUI.populateGroupComboBox(TimetableUI.java:209)
+	at com.css.timetable.TimetableUI.<init>(TimetableUI.java:38)
+	at unit_tests.TimetableUITest.testPopulateRoomComboBox(TimetableUITest.java:427)
+
