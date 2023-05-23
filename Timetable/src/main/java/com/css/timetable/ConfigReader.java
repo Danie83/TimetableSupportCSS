@@ -10,12 +10,25 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ConfigReader {
+/**
+ * A Singleton class that reads properties for the database connection
+ * and setup.
+ */
+public class ConfigReader 
+{
+    /** The name of the configuration file. */
+    private static final String RESOURCE_FILE = "config.properties";
     
-    private static String RESOURCE_FILE = "config.properties";
+    /** Reference to the only instance of this class. */
     private static ConfigReader instance = null;
+    
+    /** The properties that are read from the configuration properties. */
     private Properties properties;
     
+    /**
+     * Private constructor to prevent instantiation from outside the class.
+     * Initializes the properties object and loads the configuration file.
+     */
     private ConfigReader()
     {
         this.properties = new Properties();
@@ -32,6 +45,12 @@ public class ConfigReader {
         }
     }
     
+    /**
+     * Retrieves the singleton instance of the ConfigReader class.
+     * if the instance does not exists, it is created.
+     * 
+     * @return  The singleton instance of ConfigReader.
+     */
     public static ConfigReader getInstance()
     {
         if (instance == null) 
@@ -42,18 +61,40 @@ public class ConfigReader {
         return instance;
     }
     
+    /**
+     * Get the properties obtained from the configuration file.
+     * 
+     * @return  The properties from the configuration file.
+     */
     public Properties getProperties()
     {
         return properties;
     }
     
+    /**
+     * Method that retrieves a specific property using a given string.
+     * 
+     * @param   key
+     *          The property that will be retrieved.
+     * 
+     * @return  The value of the property requested.
+     */
     public String getProperty(String key)
     {
         assert key != null : "Key cannot be null";
         return properties.getProperty(key);
     }
     
-    public void setProperty(String key, String value) {
+    /**
+     * Method that sets a specific property.
+     * 
+     * @param   key
+     *          The property that is set.
+     * @param   value 
+     *          The new value of the property.
+     */
+    public void setProperty(String key, String value) 
+    {
         assert key != null : "Key cannot be null";
         assert value != null : "Value cannot be null";
         properties.setProperty(key, value);
