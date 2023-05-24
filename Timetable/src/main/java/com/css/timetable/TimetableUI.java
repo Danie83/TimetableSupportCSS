@@ -26,12 +26,19 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-public class TimetableUI extends javax.swing.JFrame {
-
+/**
+ * The The main user interface that extends JFrame. It provides
+ * functionalities for adding new timetable items and exam items,
+ * validating them at the same time.
+ */
+public final class TimetableUI extends javax.swing.JFrame 
+{
     /**
-     * Creates new form TimetableUI
+     * Main constructor that instantiates the components required 
+     * to render the frame and populates all ComboBox items.
      */
-    public TimetableUI() {
+    public TimetableUI() 
+    {
         super("Timetable UI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initComponents();
@@ -55,7 +62,8 @@ public class TimetableUI extends javax.swing.JFrame {
 
         int years = Integer.parseInt(config.getProperty("setup.groups.years"));
         String[] yearItems = new String[years];
-        for (int i = 0; i < years; i++) {
+        for (int i = 0; i < years; i++) 
+        {
             yearItems[i] = Integer.toString(i + 1);
             assert yearItems[i] != null && Integer.parseInt(yearItems[i]) > 0;
         }
@@ -63,29 +71,31 @@ public class TimetableUI extends javax.swing.JFrame {
         populateYearComboBox(yearItems);
         String[] dayItems = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         populateDayComboBox(dayItems);
-        
-    }
-
-    public void updateUI() {
-        String[] items = {"Group 1", "Group 2", "Group 3"};
-        // modify existent method to receive a parameter
-        // populateGroupComboBox(items);
-        // updateUI should be called when required (button is pressed, combobox item is selected)
     }
     
-    public void populateExamTable(){
+    /**
+     * Method that retrieves all exam entries from the database
+     * and populates it's specific component table in the frame.
+     * This method is used to refresh the exam component in the UI.
+     */
+    public void populateExamTable()
+    {
         String columns[] = {"id", "From - To", "Group", "Discipline", "Type", "Teacher", "Date", "Room"};
         String group = (String) groupComboBox.getSelectedItem();
         String sql = "SELECT * FROM examtable WHERE group_name = ?;";
+        
         List<String[]> timetable = new ArrayList<>();
-        try {
+        
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null : "Database connection is null";
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setString(1, group);
             ResultSet rs = ptmt.executeQuery();
             assert rs != null;
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 int i = 0;
                 String[] item = new String[columns.length];
                 item[i++] = String.valueOf(rs.getInt("id"));
@@ -98,13 +108,16 @@ public class TimetableUI extends javax.swing.JFrame {
                 item[i++] = rs.getString("room");
                 timetable.add(item);
             }
-            assert timetable.size() > 0;
-        } catch (SQLException ex) {
+            assert !timetable.isEmpty();
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         String[][] data = new String[timetable.size()][];
-        for (int j = 0; j < timetable.size(); j++) {
+        for (int j = 0; j < timetable.size(); j++) 
+        {
             data[j] = timetable.get(j);
             assert data[j] != null;
         }
@@ -117,8 +130,16 @@ public class TimetableUI extends javax.swing.JFrame {
         jTable2.getColumnModel().getColumn(0).setMaxWidth(0);
         jTable2.getColumnModel().getColumn(0).setResizable(false);
     }
-
-    public void populateTable() {
+    
+    /**
+     * Method that retrieves all the timetable and exam entries from the database
+     * and populates their specific table component in the frame.
+     * This method is initially called in the constructor to populate both timetable
+     * and exam tables, but also used to update both tables when an action is performed
+     * on the group component.
+     */
+    public void populateTable() 
+    {
         String columns[] = {"id", "From - To", "Group", "Discipline", "Type", "Teacher", "Day", "Room"};
         String columns1[] = {"id", "From - To", "Group", "Discipline", "Type", "Teacher", "Date", "Room"};
         String group = (String) groupComboBox.getSelectedItem();
@@ -127,14 +148,16 @@ public class TimetableUI extends javax.swing.JFrame {
         int totalExams = 0;
         int totalDisciplines = 0;
         
-        try {
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null;
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setString(1, group);
             ResultSet rs = ptmt.executeQuery();
             //assert rs.size() > 0;
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 int i = 0;
                 String[] item = new String[columns.length];
                 item[i++] = String.valueOf(rs.getInt("id"));
@@ -142,10 +165,12 @@ public class TimetableUI extends javax.swing.JFrame {
                 item[i++] = rs.getString("group_name");
                 item[i++] = rs.getString("course");
                 item[i++] = rs.getString("course_type");
-                if(item[i - 1].split(" ").length > 1 && item[i - 1].split(" ")[1].equals("Exam")){
+                if(item[i - 1].split(" ").length > 1 && item[i - 1].split(" ")[1].equals("Exam"))
+                {
                     totalExams++;
                 }
-                else{
+                else
+                {
                     totalDisciplines++;
                 }
                 item[i++] = rs.getString("teacher");
@@ -154,7 +179,9 @@ public class TimetableUI extends javax.swing.JFrame {
                 timetable.add(item);
             }
             assert (totalDisciplines + totalExams) <= timetable.size();
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -163,23 +190,22 @@ public class TimetableUI extends javax.swing.JFrame {
         
         int i = 0;
         int ii = 0;
-        for(int j = 0; j<timetable.size(); j++){
+        for(int j = 0; j<timetable.size(); j++)
+        {
             String[] item = timetable.get(j);
-            if(item[4].split(" ").length > 1 && item[4].split(" ")[1].equals("Exam")){
+            if(item[4].split(" ").length > 1 && item[4].split(" ")[1].equals("Exam"))
+            {
                 dataExamtable[i] = item;
                 i++;
                 assert i <= dataExamtable.length;
             }
-            else{
+            else
+            {
                 assert ii <= dataTimetable.length;
                 dataTimetable[ii] = item;
                 ii++;
             }
         }
-        
-        //for (int j = 0; j < timetable.size(); j++) {
-        //    data[j] = timetable.get(j);
-        //}
 
         DefaultTableModel model = new DefaultTableModel(dataTimetable, columns);
         DefaultTableModel model1 = new DefaultTableModel(dataExamtable, columns1);
@@ -199,15 +225,24 @@ public class TimetableUI extends javax.swing.JFrame {
         jTable2.getColumnModel().getColumn(0).setResizable(false);
     }
 
-    public void populateGroupComboBox() {
+    /**
+     * Method that retrieves all the groups from the database and
+     * populates it's specific group component (ComboBox) in the UI.
+     * This method is used to initially populate the group component
+     * in the constructor.
+     */
+    public void populateGroupComboBox() 
+    {
         int groupNumber = 0;
         int i = 0;
-        try {
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
             assert rs != null;
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 groupNumber = rs.getInt("total");
             }
 
@@ -215,7 +250,8 @@ public class TimetableUI extends javax.swing.JFrame {
             stmt = conn.createStatement();
             rs = stmt.executeQuery("SELECT name FROM groups;");
             assert rs != null;
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 assert i <= groupItems.length;
                 groupItems[i] = rs.getString("name");
                 i++;
@@ -223,21 +259,32 @@ public class TimetableUI extends javax.swing.JFrame {
 
             DefaultComboBoxModel model = new DefaultComboBoxModel(groupItems);
             groupComboBox.setModel(model);
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void populateTeacherComboBox() {
+    /**
+     * Method that retrieves all the teachers from the database and
+     * populates it's specific teacher component (ComboBox) in the UI.
+     * This method is used to initially populate the teacher component in
+     * the constructor.
+     */
+    public void populateTeacherComboBox() 
+    {
         int teachersNumber = 0;
         String items[];
-        try {
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null : "Database connection is null";            
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM teachers;");
             assert rs != null;
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 teachersNumber = rs.getInt("total");
             }
 
@@ -245,7 +292,8 @@ public class TimetableUI extends javax.swing.JFrame {
             int i = 0;
             stmt = conn.createStatement();
             rs = stmt.executeQuery("SELECT last_name, first_name FROM teachers;");
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 String last_name = rs.getString("last_name");
                 String first_name = rs.getString("first_name");
                 assert i <= items.length;
@@ -255,14 +303,22 @@ public class TimetableUI extends javax.swing.JFrame {
 
             DefaultComboBoxModel model = new DefaultComboBoxModel(items);
             teacherComboBox.setModel(model);
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void updateTeacherComboBox() {
+    /**
+     * Method that retrieves all the teachers from the database and
+     * updates it's specific teacher component (ComboBox) in the UI.
+     */
+    public void updateTeacherComboBox() 
+    {
         String selectedDiscipline = (String) disciplineComboBox.getSelectedItem();
-        try {
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null : "Database connection is null";            
             String sql = "SELECT first_name, last_name FROM teachers JOIN discipline ON teachers.course_id = discipline.id WHERE discipline.name = ?;";
@@ -270,7 +326,8 @@ public class TimetableUI extends javax.swing.JFrame {
             ptmt.setString(1, selectedDiscipline);
             ResultSet rs = ptmt.executeQuery();
             List<String> items = new ArrayList<>();
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 String fName = rs.getString("first_name");
                 String lName = rs.getString("last_name");
 
@@ -282,20 +339,31 @@ public class TimetableUI extends javax.swing.JFrame {
             String[] finalItems = items.toArray(new String[items.size()]);
             DefaultComboBoxModel model = new DefaultComboBoxModel(finalItems);
             teacherComboBox.setModel(model);
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void populateDisciplineComboBox() {
+    /**
+     * Method that retrieves all the disciplines from the database and
+     * populates it's specific discipline component (ComboBox) in the UI.
+     * This method is used to initially populate the discipline component
+     * in the constructor.
+     */
+    public void populateDisciplineComboBox() 
+    {
         int disciplineNumber = 0;
         String items[];
-        try {
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null : "Database connection is null";            
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM discipline;");
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 disciplineNumber = rs.getInt("total");
             }
 
@@ -303,7 +371,8 @@ public class TimetableUI extends javax.swing.JFrame {
             int i = 0;
             stmt = conn.createStatement();
             rs = stmt.executeQuery("SELECT name FROM discipline;");
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 String name = rs.getString("name");
                 assert i <= items.length;
                 items[i] = new StringBuilder().append(name).toString();
@@ -312,16 +381,24 @@ public class TimetableUI extends javax.swing.JFrame {
 
             DefaultComboBoxModel model = new DefaultComboBoxModel(items);
             disciplineComboBox.setModel(model);
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public void updateDisciplineComboBox() {
+    
+    /**
+     * Method that retrieves all the disciplines from the database and
+     * updates it's specific discipline component (ComboBox) in the UI.
+     */
+    public void updateDisciplineComboBox() 
+    {
         String selectedGroup = (String) groupComboBox.getSelectedItem();
         int year = selectedGroup.toCharArray()[0] - '0';
         String checkDisciplinesQuery = "SELECT name FROM discipline WHERE year = ?;";
-        try {
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null : "Database connection is null";            
             PreparedStatement ptmt1 = conn.prepareStatement("SELECT COUNT(*) AS total FROM discipline WHERE year = ?;");
@@ -334,34 +411,51 @@ public class TimetableUI extends javax.swing.JFrame {
             ptmt.setInt(1, year);
             ResultSet rs = ptmt.executeQuery();
             int i = 0;
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 rs.getString("name");
                 assert i <= items.length;
                 items[i++] = rs.getString("name");
             }
             DefaultComboBoxModel model = new DefaultComboBoxModel(items);
             disciplineComboBox.setModel(model);
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         updateTeacherComboBox();
     }
 
-    public void populateClassComboBox() {
+    /**
+     * Method that populates it's specific class component (ComboBox) in the UI
+     * with an array of fixed elements.
+     */
+    public void populateClassComboBox() 
+    {
         String[] items = {"Seminary", "Laboratory", "Course", "Course Exam", "Lab Exam"};
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         classComboBox.setModel(model);
     }
 
-    public void populateRoomComboBox() {
+    /**
+     * Method that retrieves all the rooms from the database and
+     * populates it's specific group component (ComboBox) in the UI.
+     * This method is used to initially populate the room component
+     * in the constructor.
+     */
+    public void populateRoomComboBox() 
+    {
         int roomsNumber = 0;
         String items[];
-        try {
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null : "Database connection is null";            
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM rooms;");
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 roomsNumber = rs.getInt("total");
             }
 
@@ -369,7 +463,8 @@ public class TimetableUI extends javax.swing.JFrame {
             int i = 0;
             stmt = conn.createStatement();
             rs = stmt.executeQuery("SELECT name FROM rooms;");
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 String name = rs.getString("name");
                 assert i <= items.length;
                 items[i] = new StringBuilder().append(name).toString();
@@ -378,55 +473,83 @@ public class TimetableUI extends javax.swing.JFrame {
 
             DefaultComboBoxModel model = new DefaultComboBoxModel(items);
             roomComboBox.setModel(model);
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void updateRoomComboBox() {
+    /**
+     * Method that retrieves all the rooms from the database and
+     * updates it's specific room component (ComboBox) in the UI.
+     */
+    public void updateRoomComboBox() 
+    {
         String selectedClass = (String) classComboBox.getSelectedItem();
         selectedClass = selectedClass.startsWith("C") ? "Course" : selectedClass;
         selectedClass = selectedClass.startsWith("L") ? "Laboratory" : selectedClass;
 
-        try {
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null : "Database connection is null";
             PreparedStatement ptmt = conn.prepareStatement("SELECT name FROM rooms WHERE type = ?;");
             ptmt.setString(1, selectedClass);
             ResultSet rs = ptmt.executeQuery();
             List<String> itemsList = new ArrayList<>();
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 itemsList.add(rs.getString("name"));
             }
             String[] items = itemsList.toArray(new String[itemsList.size()]);
             DefaultComboBoxModel model = new DefaultComboBoxModel(items);
             roomComboBox.setModel(model);
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void populateTimeSlotStartComboBox() {
+    /**
+     * Method that populates it's specific starting hour time slot component (ComboBox) 
+     * in the UI with an array of fixed elements. The array represents the possible starting hours
+     * of a course that can be held between 8 and 20. A course can only start between 8 and 19.
+     */
+    public void populateTimeSlotStartComboBox() 
+    {
         String[] items = {"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"};
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         timeSlotStartComboBox.setModel(model);
     }
 
-    public void updateTimeSlotStartComboBox(int endHour) {
+    /**
+     * Method that updates it's specific starting hour time slot component (ComboBox) 
+     * in the UI based on an ending hour selected in the ending hour time slot.
+     * 
+     * @param   endHour
+     *          The ending hour of the course.
+     */
+    public void updateTimeSlotStartComboBox(int endHour) 
+    {
         Object selectedItem = timeSlotStartComboBox.getSelectedItem();
         int numberOfHours = endHour - 8;
         String[] items = new String[numberOfHours];
 
-        for (int i = 8, j = 0; i < endHour; i++, j++) {
+        for (int i = 8, j = 0; i < endHour; i++, j++) 
+        {
             items[j] = String.valueOf(i);
         }
 
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         timeSlotStartComboBox.setModel(model);
-        for (int i = 0; i < timeSlotStartComboBox.getItemCount(); i++) {
+        for (int i = 0; i < timeSlotStartComboBox.getItemCount(); i++) 
+        {
             Object item = timeSlotStartComboBox.getItemAt(i);
             assert item != null;
-            if (item != null && item.toString().equals(selectedItem.toString())) {
+            if (item != null && item.toString().equals(selectedItem.toString())) 
+            {
                 timeSlotStartComboBox.setSelectedItem(selectedItem.toString());
                 break;
             }
@@ -434,17 +557,32 @@ public class TimetableUI extends javax.swing.JFrame {
         updateTimeSlotEndComboBox(endHour - 1);
     }
 
-    public void populateTimeSlotEndComboBox() {
+    /**
+     * Method that populates it's specific ending hour time slot component (ComboBox) 
+     * in the UI with an array of fixed elements. The array represents the possible ending hours
+     * of a course that can be held between 8 and 20. A course can only end between 9 and 20.
+     */
+    public void populateTimeSlotEndComboBox() 
+    {
         String[] items = {"9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"};
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         timeSlotEndComboBox.setModel(model);
     }
 
-    public void updateTimeSlotEndComboBox(int startHour) {
+    /**
+     * Method that updates it's specific ending hour time slot component (ComboBox) 
+     * in the UI based on a starting hour selected in the starting hour time slot.
+     * 
+     * @param   startHour
+     *          The starting hour of the course.
+     */
+    public void updateTimeSlotEndComboBox(int startHour) 
+    {
         int numberOfHours = 20 - startHour;
         String[] items = new String[numberOfHours];
 
-        for (int i = startHour + 1, j = 0; i <= 20; i++, j++) {
+        for (int i = startHour + 1, j = 0; i <= 20; i++, j++) 
+        {
             items[j] = String.valueOf(i);
         }
         assert startHour < 20;
@@ -453,12 +591,28 @@ public class TimetableUI extends javax.swing.JFrame {
         timeSlotEndComboBox.setModel(model);
     }
 
-    public void populateYearComboBox(String[] items) {
+    /**
+     * Method that populates it's specific year component (ComboBox) in the UI
+     * with an array of given elements.
+     * This method is used to initially populate the year component
+     * in the constructor.
+     * 
+     * @param   items
+     *          Array that contains the years that will be added to the
+     *          year component
+     */
+    public void populateYearComboBox(String[] items) 
+    {
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         yearComboBox.setModel(model);
     }
 
-    public void updateYearComboBox() {
+    /**
+     * Method that updates it's specific year component (ComboBox) in the UI
+     * with the year of the current group selected in t he group component.
+     */
+    public void updateYearComboBox() 
+    {
         String selectedGroup = (String) groupComboBox.getSelectedItem();
         String[] items = new String[1];
 
@@ -467,7 +621,18 @@ public class TimetableUI extends javax.swing.JFrame {
         yearComboBox.setSelectedItem(items[0]);
     }
 
-    public void populateDayComboBox(String[] items) {
+    /**
+     * Method that populates it's specific day component (ComboBox) in the UI
+     * with an array of given elements.
+     * This method is used to initially populate the day component
+     * in the constructor.
+     * 
+     * @param   items
+     *          Array that contains the days that will be added to the
+     *          days component.
+     */
+    public void populateDayComboBox(String[] items) 
+    {
         DefaultComboBoxModel model = new DefaultComboBoxModel(items);
         dayComboBox.setModel(model);
     }
@@ -476,6 +641,11 @@ public class TimetableUI extends javax.swing.JFrame {
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
+     * 
+     * INFO: The following code is generated and can't be edited directly.
+     * The only way to modify it is to use the design tool available for modifying
+     * SWING components.
+     * It's purpose it to instantiate all components and actions of the UI.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -811,51 +981,85 @@ public class TimetableUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Method called when an action is performed on the group component.
+     * It updates the discipline, year and table components.
+     * Updates disciplines available for the group based on the year.
+     * Updates the year of the group selected.
+     * Updates the timetable and exam entries of the group.
+     * 
+     * @param   evt
+     *          Action performed on the group component (Select).
+     */
     private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupComboBoxActionPerformed
         updateDisciplineComboBox();
         updateYearComboBox();
         populateTable();
     }//GEN-LAST:event_groupComboBoxActionPerformed
 
-    //function for seeing if class and the room are suitable
-    public boolean isRoomSuitable(String newType, String newRoom) {
-        boolean ok = true;
+    /**
+     * Method that checks if a class type and room are compatible.
+     * 
+     * @param   newType
+     *          Type of the room that is checked.
+     * @param   newRoom
+     *          The room that is checked for compatibility.
+     * 
+     * @return  {@code true} if the room is suitable,
+     *          {@code false} otherwise.
+     */
+    public boolean isRoomSuitable(String newType, String newRoom) 
+    {
         if ((newType == "Course" && newRoom.charAt(0) != 'C')
-                || (newType == "Laboratory" && newRoom.charAt(0) != 'L')) {
-            ok = false;
+                || (newType == "Laboratory" && newRoom.charAt(0) != 'L')) 
+        {
+            return false;
         }
-        return ok;
+        return true;
     }
 
-    //functie prin care iau numarul de inregistrari anterioare
-    public Integer getRegistrationsNumber() {
-        //vector folosit pentru vechile inregistrari
+    /**
+     * Method that retrieves the current count of timetable entries from
+     * the database. Exam entries are not subject to this query.
+     * 
+     * @return  The number of timetable entries.
+     */
+    public Integer getRegistrationsNumber() 
+    {
         int registrationsNumber = 0;
-        RegistrationTimetable registrations[] = null;
-
-        //Conectare la BD
-        try {
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null : "Database connection is null";            
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total_regs FROM timetable;");
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 registrationsNumber = rs.getInt("total_regs");
             }
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         return registrationsNumber;
     }
 
-    //methods for taking all the registrations from database
+    /**
+     * Method that creates and returns an array of RegistrationTimetable instances of
+     * all the timetable entries from the database. 
+     * Exam entries are not subject to this query.
+     * 
+     * @return  An array of RegistrationTimetable instances representing
+     *          the database timetable entries.
+     */
     public RegistrationTimetable[] getRegistrationsFromDatabase() {
 
-        //vector folosit pentru vechile inregistrari
         int registrationsNumber = 0;
         RegistrationTimetable registrations[] = null;
-        //Connection to database
-        try {
+        
+        try 
+        {
             Connection conn = JDBCConnection.getInstance().getConnection();
             assert conn != null : "Database connection is null";            
             registrationsNumber = getRegistrationsNumber();
@@ -864,7 +1068,8 @@ public class TimetableUI extends javax.swing.JFrame {
             int iter = 0;
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM timetable");
-            while (rs.next()) {
+            while (rs.next()) 
+            {
                 RegistrationTimetable regi = new RegistrationTimetable();
 
                 regi.setStartHour(rs.getInt("start_hour"));
@@ -891,12 +1096,13 @@ public class TimetableUI extends javax.swing.JFrame {
 
                 registrations[iter++] = regi;
             }
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return registrations;
-
     }
 
     //functie pentru constrangerea: un curs este inclus total temporal in celalalt

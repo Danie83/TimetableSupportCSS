@@ -34,6 +34,13 @@ public class RegistrationTimetable
     private String teacher;
     
     /**
+     * Empty constructor.
+     */
+    public RegistrationTimetable()
+    {
+    }
+    
+    /**
      * Constructor that instantiates a timetable entry.
      * 
      * @param   startHour
