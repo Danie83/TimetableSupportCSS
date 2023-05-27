@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -190,7 +191,7 @@ public final class TimetableUI extends javax.swing.JFrame
         
         int i = 0;
         int ii = 0;
-        for(int j = 0; j<timetable.size(); j++)
+        for(int j = 0; j < timetable.size(); j++)
         {
             String[] item = timetable.get(j);
             if(item[4].split(" ").length > 1 && item[4].split(" ")[1].equals("Exam"))
@@ -835,12 +836,6 @@ public final class TimetableUI extends javax.swing.JFrame
 
         dayComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        textAreaExamDate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textAreaExamDateActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -1053,7 +1048,8 @@ public final class TimetableUI extends javax.swing.JFrame
      * @return  An array of RegistrationTimetable instances representing
      *          the database timetable entries.
      */
-    public RegistrationTimetable[] getRegistrationsFromDatabase() {
+    public RegistrationTimetable[] getRegistrationsFromDatabase() 
+    {
 
         int registrationsNumber = 0;
         RegistrationTimetable registrations[] = null;
@@ -1105,105 +1101,206 @@ public final class TimetableUI extends javax.swing.JFrame
         return registrations;
     }
 
-    //functie pentru constrangerea: un curs este inclus total temporal in celalalt
-    public boolean isCourseNotTotallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
-
-        boolean ok = true;
-
-        if ( // un curs existent este inclus total temporal cursul nou
-                oldOne.getStartHour() >= newOne.getStartHour() && oldOne.getEndHour() <= newOne.getEndHour() && oldOne.getDay().equals(newOne.getDay()) && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
-            ok = false;
+    /**
+     * Method that check two RegistrationTimetable instance for a total overlapping.
+     * Two courses, A and B, overlap when one of the courses is held during the hour interval
+     * of the other, on the same day and in the same room.
+     * 
+     * @param   oldOne
+     *          The course that already belongs to the timetable.
+     * @param   newOne
+     *          The course that is checked for overlapping.
+     * 
+     * @return  {@code true} if the course doesn't totally overlap the old course,
+     *          {@code false} otherwise.
+     */
+    public boolean isCourseNotTotallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne)
+    {
+        if (oldOne.getStartHour() >= newOne.getStartHour() && 
+            oldOne.getEndHour() <= newOne.getEndHour() && 
+            oldOne.getDay().equals(newOne.getDay()) &&
+            (oldOne.getRoom().equals(newOne.getRoom()) || 
+             oldOne.getGroupName().equals(newOne.getGroupName()))) 
+        {
+            return false;
         }
-        if ( //un curs existent include total temporal cursul nou
-                oldOne.getStartHour() <= newOne.getStartHour() && oldOne.getEndHour() >= newOne.getEndHour() && oldOne.getDay().equals(newOne.getDay()) && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
-            ok = false;
+        
+        if (oldOne.getStartHour() <= newOne.getStartHour() && 
+            oldOne.getEndHour() >= newOne.getEndHour() && 
+            oldOne.getDay().equals(newOne.getDay()) && 
+            (oldOne.getRoom().equals(newOne.getRoom()) || 
+             oldOne.getGroupName().equals(newOne.getGroupName())))
+        {
+            return false;
         }
-        return ok;
+        
+        return true;
     }
+    
     //functie pentru constrangerea://cursul nou incepe/ se termina in timpul altui curs 
-    public boolean isCourseNotPartiallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
-        boolean ok = true;
-        if ( //cursul nou incepe in timpul altui curs 
-                oldOne.getEndHour() > newOne.getStartHour() && oldOne.getEndHour() <= newOne.getEndHour() && oldOne.getDay().equals(newOne.getDay()) && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
-            ok = false;
+    /**
+     * Method that check two RegistrationTimetable instance for a partial overlapping.
+     * Two courses, A and B, partially overlap when one of the courses starts or ends
+     * during the hour interval of the other, on the same day and in the same room.
+     * 
+     * @param   oldOne
+     *          The course that already belongs to the timetable.
+     * @param   newOne
+     *          The course that is checked for overlapping.
+     * 
+     * @return  {@code true} if the course doesn't partially overlap the old course,
+     *          {@code false} otherwise.
+     */
+    public boolean isCourseNotPartiallyOverlapped(RegistrationTimetable oldOne, RegistrationTimetable newOne) 
+    {
+        if (oldOne.getEndHour() > newOne.getStartHour() &&
+            oldOne.getEndHour() <= newOne.getEndHour() && 
+            oldOne.getDay().equals(newOne.getDay()) &&
+            (oldOne.getRoom().equals(newOne.getRoom()) || 
+             oldOne.getGroupName().equals(newOne.getGroupName()))) 
+        {
+            return false;
         }
-        if ( //cursul nou incepe in timpul altui curs 
-                oldOne.getStartHour() >= newOne.getStartHour() && oldOne.getStartHour() < newOne.getEndHour() && oldOne.getDay().equals(newOne.getDay()) && (oldOne.getRoom().equals(newOne.getRoom()) || /*oldOne.getTeacher().equals(newOne.getTeacher())||*/ oldOne.getGroupName().equals(newOne.getGroupName()))) {
-            ok = false;
+        
+        if (oldOne.getStartHour() >= newOne.getStartHour() &&
+            oldOne.getStartHour() < newOne.getEndHour() &&
+            oldOne.getDay().equals(newOne.getDay()) &&
+            (oldOne.getRoom().equals(newOne.getRoom()) ||
+             oldOne.getGroupName().equals(newOne.getGroupName()))) 
+        {
+            return false;
         }
-        return ok;
+        
+        return true;
     }
-    public boolean hasValidDate(RegistrationTimetable reg){
+    
+    /**
+     * Check if the date of a RegistrationTimetable is a valid one.
+     * A valid day is either one of the days of the week or a date
+     * that can be formatted and compared with the current date.
+     * When a RegistrationTimetable date is not a day of the week,
+     * it means that it is an exam that and it must be held on a 
+     * date that is after the current one.
+     * 
+     * @param   reg
+     *          The RegistrationTimetable instance that is checked for
+     *          a valid date.
+     * 
+     * @return  {@code true} if the date is valid, {@code false} otherwise.
+     */
+    public boolean hasValidDate(RegistrationTimetable reg)
+    {
         String day = reg.getDay();
         String[] dayItems = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-        List<String> weekDays = new ArrayList<>();
-        for(int i = 0; i<dayItems.length; i++){
-            weekDays.add(dayItems[i]);
-        }
-        if(weekDays.contains(day)){
+        List<String> weekDays = Arrays.asList(dayItems);
+        
+        if(weekDays.contains(day))
+        {
             return true;
         }
-        else{
+        else
+        {
             String format = "dd-MM-yyyy";
             SimpleDateFormat dateFormat = new SimpleDateFormat(format);
             dateFormat.setLenient(false);
-            try {
+            try 
+            {
                 Date date = dateFormat.parse(day);
                 LocalDate today = LocalDate.now();
                 LocalDate dateToCheck = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 return dateToCheck.isAfter(today);
-            } catch (ParseException e) {
+            } 
+            catch (ParseException e) 
+            {
                 return false;
             }
         }
     }
-    public boolean sameCourseOnceAWeek(RegistrationTimetable oldOne, RegistrationTimetable newOne) {
-        boolean ok = true;
-        if (newOne.getCourseType().equals("Course")) {
-            if (oldOne.getCourseType().equals("Course") && oldOne.getCourse().equals(newOne.getCourse()) && oldOne.getGroupName().charAt(0) == newOne.getGroupName().charAt(0)) {
-                ok = false;
+    
+    /**
+     * Method that checks if a specified course is already held for
+     * a half year.
+     * 
+     * @param   oldOne
+     *          Existent course.
+     * @param   newOne
+     *          New course that is validated.
+     * 
+     * @return  {@code true} if the course is not held for that half year yet,
+     *          {@code false} otherwise.
+     */
+    public boolean sameCourseOnceAWeek(RegistrationTimetable oldOne, RegistrationTimetable newOne) 
+    {
+        if (newOne.getCourseType().equals("Course")) 
+        {
+            if (oldOne.getCourseType().equals("Course") &&
+                oldOne.getCourse().equals(newOne.getCourse()) &&
+                oldOne.getGroupName().charAt(0) == newOne.getGroupName().charAt(0)) 
+            {
+                return false;
             }
         }
-        return ok;
+        return true;
     }
 
-    public boolean isViableForInsert(RegistrationTimetable newReg) {
-
-        boolean ok = true;
-        
-        if(!hasValidDate(newReg)){
-            ok = false;
+    /**
+     * Main method that checks if a new timetable/exam item can be added.
+     * This method uses the functionalities of other methods to verify
+     * if the item is valid for insertion.
+     * 
+     * @param   newReg
+     *          The new timetable/exam item that is checked.
+     * 
+     * @return  {@code true} if it can be inserted, {@code false} otherwise.
+     */
+    public boolean isViableForInsert(RegistrationTimetable newReg) 
+    {
+        if(!hasValidDate(newReg))
+        {
             jTextArea1.setText("Invalid date format. The format is: (dd-MM-yyyy)");
+            return false;
         }
         
-        if (isRoomSuitable(newReg.getCourseType(), newReg.getRoom()) == false) {
-            ok = false;
+        if (isRoomSuitable(newReg.getCourseType(), newReg.getRoom()) == false) 
+        {
             jTextArea1.setText("Invalid room. Choose one suitable for the type of activity that you have chosen. \nCourse rooms - name starts with C; \nLaboratory rooms - name starts with L;");
+            return false;
         }
 
         RegistrationTimetable[] registrations = getRegistrationsFromDatabase();
         int registrationsNumber = getRegistrationsNumber();
 
-        for (int i = 0; i < registrationsNumber && ok; i++) {
-            if (isCourseNotTotallyOverlapped(registrations[i], newReg) == false) {
-                ok = false;
+        for (int i = 0; i < registrationsNumber; i++) 
+        {
+            if (isCourseNotTotallyOverlapped(registrations[i], newReg) == false) 
+            {
                 jTextArea1.setText("The course that you have inserted overlaps the following one: " + registrations[i].toString() + "\n The activity that you have chosen is: " + newReg.toString());
-                break;
+                return false;
             }
-            if (isCourseNotPartiallyOverlapped(registrations[i], newReg) == false) {
-                ok = false;
+            
+            if (isCourseNotPartiallyOverlapped(registrations[i], newReg) == false) 
+            {
                 jTextArea1.setText("The course that you have inserted partially overlaps the following one: " + registrations[i].toString() + "\n The activity that you have chosen is: " + newReg.toString());
-                break;
+                return false;
             }
-            if (sameCourseOnceAWeek(registrations[i], newReg) == false) {
-                ok = false;
+            
+            if (sameCourseOnceAWeek(registrations[i], newReg) == false) 
+            {
                 jTextArea1.setText("There is already a course of " + registrations[i].getCourse() + " for this year. See table for group " + registrations[i].getGroupName() + ".");
-                break;
+                return false;
             }
         }
-        return ok;
+        return true;
     }
 
+    /***
+     * Method that handles the submit action of a timetable/exam item.
+     * When the submit button is pressed, the record entry is validated and
+     * is inserted accordingly depending on the type (course/exam) if it passes.
+     * 
+     * @param   evt
+     *          The submit event.
+     */
     private void submitButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButonActionPerformed
         int startHour = Integer.parseInt((String) timeSlotStartComboBox.getSelectedItem());
         int endHour = Integer.parseInt((String) timeSlotEndComboBox.getSelectedItem());
@@ -1220,13 +1317,9 @@ public final class TimetableUI extends javax.swing.JFrame
         
         boolean okExam = false;
         String[] splitType = type.split(" ");
-        if(splitType.length > 1){
-            if(splitType[1].equals("Exam")){
-                okExam = true;
-            }
-            else{
-                okExam = false;
-            }
+        if(splitType.length > 1)
+        {
+            okExam = splitType[1].equals("Exam");
         }
         
         newReg.setStartHour(startHour);
@@ -1236,33 +1329,42 @@ public final class TimetableUI extends javax.swing.JFrame
         newReg.setCourseType(type);
         newReg.setTeacher(teacher);
         newReg.setRoom(room);
-        if(okExam){
+        if(okExam)
+        {
             newReg.setDay(date);
-            day = new String(date);
+            day = date;
         }
         else{
             newReg.setDay(day);
         }
         
         
-        if (isViableForInsert(newReg)) {
-            if (newReg.getCourseType().equals("Course") || newReg.getCourseType().equals("Course Exam") || newReg.getCourseType().equals("Lab Exam")) {
-                try {
+        if (isViableForInsert(newReg)) 
+        {
+            if (newReg.getCourseType().equals("Course") || 
+                newReg.getCourseType().equals("Course Exam") ||
+                newReg.getCourseType().equals("Lab Exam")) 
+            {
+                try 
+                {
                     int groupNumber = 0;
                     Connection conn = JDBCConnection.getInstance().getConnection();
                     assert conn != null : "Database connection is null";                    
                     Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM groups;");
-                    while (rs.next()) {
+                    while (rs.next()) 
+                    {
                         groupNumber = rs.getInt("total");
                     }
 
-                    String currentGroup = new String();
+                    String currentGroup;
                     stmt = conn.createStatement();
                     rs = stmt.executeQuery("SELECT name FROM groups;");
-                    while (rs.next()) {
+                    while (rs.next()) 
+                    {
                         currentGroup = rs.getString("name").trim();
-                        if (newReg.getGroupName().charAt(0) == currentGroup.charAt(0)) {
+                        if (newReg.getGroupName().charAt(0) == currentGroup.charAt(0)) 
+                        {
                             PreparedStatement ptmt = conn.prepareStatement("INSERT INTO timetable (room, start_hour, end_hour, day, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);");
                             ptmt.setString(1, room);
                             ptmt.setInt(2, startHour);
@@ -1277,12 +1379,16 @@ public final class TimetableUI extends javax.swing.JFrame
                         }
                     }
                     assert jTextArea1.getText() != null;
-                } catch (SQLException ex) {
+                } 
+                catch (SQLException ex) 
+                {
                     Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            else {
-                try {
+            else 
+            {
+                try 
+                {
                     Connection conn = JDBCConnection.getInstance().getConnection();
                     PreparedStatement ptmt = conn.prepareStatement("INSERT INTO timetable (room, start_hour, end_hour, day, course, course_type, group_name, teacher) VALUES(?,?,?,?,?,?,?,?);");
                     ptmt.setString(1, room);
@@ -1295,42 +1401,68 @@ public final class TimetableUI extends javax.swing.JFrame
                     ptmt.setString(8, teacher);
                     ptmt.executeUpdate();
                     jTextArea1.setText("The activity was registered.");
-                } catch (SQLException ex) {
+                } 
+                catch (SQLException ex) 
+                {
                     Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 assert jTextArea1.getText() != null;
             }
         }
         
-        //populateExamTable();
         populateTable();
-        
     }//GEN-LAST:event_submitButonActionPerformed
 
+    /***
+     * Method that handles the export action of the timetable and exam tables.
+     * 
+     * @param   evt
+     *          The export event.
+     */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         ExportTimetable.createHTML();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    /***
+     * Method that handles the select action of the start time slot ComboBox.
+     * 
+     * @param   evt
+     *          The select event.
+     */
     private void timeSlotStartComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeSlotStartComboBoxActionPerformed
         JComboBox<String> comboBox = (JComboBox<String>) evt.getSource();
         int selectedHour = Integer.parseInt((String) comboBox.getSelectedItem());
         updateTimeSlotEndComboBox(selectedHour);
     }//GEN-LAST:event_timeSlotStartComboBoxActionPerformed
 
+    /***
+     * Method that handles the select action of the end time slot ComboBox.
+     * 
+     * @param   evt
+     *          The select event.
+     */
     private void timeSlotEndComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeSlotEndComboBoxActionPerformed
         JComboBox<String> comboBox = (JComboBox<String>) evt.getSource();
         int selectedHour = Integer.parseInt((String) comboBox.getSelectedItem());
         updateTimeSlotStartComboBox(selectedHour);
     }//GEN-LAST:event_timeSlotEndComboBoxActionPerformed
 
+    /***
+     * Method that handles the select action of the class type ComboBox.
+     * 
+     * @param   evt
+     *          The select event.
+     */
     private void classComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classComboBoxActionPerformed
         updateRoomComboBox();
         
         JComboBox<String> comboBox = (JComboBox<String>) evt.getSource();
         String selectedClassType = (String) comboBox.getSelectedItem();
         String[] splitRoomType = selectedClassType.split(" ");
-        if(splitRoomType.length > 1){
-            if(splitRoomType[1].equals("Exam")){
+        if(splitRoomType.length > 1)
+        {
+            if(splitRoomType[1].equals("Exam"))
+            {
                 textAreaExamDate.setVisible(true);
                 jLabel13.setVisible(true);
                 
@@ -1338,32 +1470,42 @@ public final class TimetableUI extends javax.swing.JFrame
                 dayComboBox.setVisible(false);
             }
         }
-        else{
+        else
+        {
             textAreaExamDate.setVisible(false);
             jLabel13.setVisible(false);
             
             jLabel12.setVisible(true);
             dayComboBox.setVisible(true);
         }
-        
     }//GEN-LAST:event_classComboBoxActionPerformed
 
+    /***
+     * Method that handles the select action of the room ComboBox.
+     * 
+     * @param   evt
+     *          The select event.
+     */
     private void removeItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeItemActionPerformed
         int selectedRowIndex = jTable1.getSelectedRow();
         int selectedRowIndex1 = jTable2.getSelectedRow();
-        if (selectedRowIndex == -1 && selectedRowIndex1 == -1) {
+        if (selectedRowIndex == -1 && selectedRowIndex1 == -1) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.INFO, "No items telected");
         }
         JTable refTable = jTable1;
-        if(selectedRowIndex != -1){
+        if(selectedRowIndex != -1)
+        {
             refTable = jTable1;
         }
-        else if(selectedRowIndex1 != -1){
+        else if(selectedRowIndex1 != -1)
+        {
             selectedRowIndex = selectedRowIndex1;
             refTable = jTable2;
         }
         
-        try {
+        try 
+        {
             String value = refTable.getValueAt(selectedRowIndex, 0).toString();
             
             Connection conn = JDBCConnection.getInstance().getConnection();
@@ -1372,27 +1514,36 @@ public final class TimetableUI extends javax.swing.JFrame
             PreparedStatement ptmt = conn.prepareStatement(sql);
             ptmt.setInt(1, Integer.parseInt(value));
             int rowsDeleted = ptmt.executeUpdate();
-            if (rowsDeleted > 0) {
+            if (rowsDeleted > 0) 
+            {
                 Logger.getLogger(TimetableUI.class.getName()).log(Level.INFO, "ITEM DELETED");
-            } else {
+            } 
+            else 
+            {
                 Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, "ITEM WAS NOT DELETED");
             }
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(TimetableUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         populateTable();
     }//GEN-LAST:event_removeItemActionPerformed
 
+    /***
+     * Method that handles the select action of the discipline ComboBox.
+     * 
+     * @param   evt
+     *          The select event.
+     */
     private void disciplineComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disciplineComboBoxActionPerformed
         updateTeacherComboBox();
     }//GEN-LAST:event_disciplineComboBoxActionPerformed
 
-    private void textAreaExamDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textAreaExamDateActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textAreaExamDateActionPerformed
-
     /**
+     * Main method of TimetableUI. Makes the interface visible.
+     * 
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -1427,38 +1578,83 @@ public final class TimetableUI extends javax.swing.JFrame
         });
     }
     
+    /**
+     * Method that returns the teacher ComboBox.
+     * 
+     * @return  The teacher ComboBox.
+     */
     public JComboBox<String> getTeacherComboBox() {
         return teacherComboBox;
     }
 
+    /**
+     * Method that returns the group ComboBox.
+     * 
+     * @return  The group ComboBox.
+     */
     public JComboBox<String> getGroupComboBox() {
         return groupComboBox;
     } 
 
+    /**
+     * Method that returns the discipline ComboBox.
+     * 
+     * @return  The discipline ComboBox.
+     */
     public JComboBox<String> getDisciplineComboBox() {
         return disciplineComboBox;
     }
 
+    /**
+     * Method that returns the class type ComboBox.
+     * 
+     * @return  The class type ComboBox.
+     */
     public JComboBox<String> getClassComboBox() {
         return classComboBox;
     }
 
+    /**
+     * Method that returns the room ComboBox.
+     * 
+     * @return  The room ComboBox.
+     */
     public JComboBox<String> getRoomComboBox() {
         return roomComboBox;
     }
 
+    /**
+     * Method that returns the start time slot ComboBox.
+     * 
+     * @return  The start time slot ComboBox.
+     */
     public JComboBox<String> getTimeSlotStartComboBox() {
         return timeSlotStartComboBox;
     }
 
+    /**
+     * Method that returns the end time slot ComboBox.
+     * 
+     * @return  The end time slot ComboBox.
+     */
     public JComboBox<String> getTimeSlotEndComboBox() {
         return timeSlotEndComboBox;
     }
 
+    /**
+     * Method that returns the year ComboBox.
+     * 
+     * @return  The year ComboBox.
+     */
     public JComboBox<String> getYearComboBox() {
         return yearComboBox;
     }
 
+    /**
+     * Method that returns the day ComboBox.
+     * 
+     * @return  The day ComboBox.
+     */
     public JComboBox<String> getDayComboBox() {
         return dayComboBox;
     }
@@ -1500,5 +1696,4 @@ public final class TimetableUI extends javax.swing.JFrame
     private javax.swing.JComboBox<String> timeSlotStartComboBox;
     private javax.swing.JComboBox<String> yearComboBox;
     // End of variables declaration//GEN-END:variables
-
 }

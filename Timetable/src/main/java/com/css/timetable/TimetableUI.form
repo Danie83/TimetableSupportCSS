@@ -501,9 +501,6 @@
           </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="textAreaExamDate">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textAreaExamDateActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>
