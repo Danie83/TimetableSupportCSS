@@ -10,11 +10,10 @@ import org.junit.jupiter.api.Test;
 
 /**
  * This is the class that contains all tests for {@link com.css.timetable.ConfigReader ConfigReader} class.
- * @author Cezar Lupu
  */
 public class ConfigReaderTests {
     /**
-     * Test for {@link com.css.timetable.ConfigReader#getInstance()  getInstance()}.
+     * Tests the functionality of {@link com.css.timetable.ConfigReader#getInstance()  getInstance()}.
      * It verifies if the we get a JDBCConnection and if JDBCConnection 
      * respects the concept of singleton.
      */
@@ -28,7 +27,7 @@ public class ConfigReaderTests {
     }
     
     /**
-     * Test for  {@link com.css.timetable.ConfigReader#getProperties() getProperties()}.
+     * Tests the functionality of {@link com.css.timetable.ConfigReader#getProperties() getProperties()}.
      * Checks that the properties were loaded correctly from the configuration file.
      */
     @Test
@@ -43,7 +42,7 @@ public class ConfigReaderTests {
     }
     
     /**
-     * Test for {@link com.css.timetable.ConfigReader#getProperty() getProperty()}.
+     * Tests the functionality of {@link com.css.timetable.ConfigReader#getProperty() getProperty()}.
      * Checks that getProperty() function correctly retrieves property values.
      */
     @Test 

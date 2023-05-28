@@ -25,13 +25,13 @@ import org.mockito.MockitoAnnotations;
 /***
  * This is the class that contains all tests made for TimetableUI class.
  * The tests are made for methods from {@link com.css.timetable.TimetableUI}.
- * 
- * @author Cezar Lupu
  */
 public class TimetableUITest {
+    /** A connection to the database. */
+    private Connection conn;
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#populateExamTable() populateExamTable()}.
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#populateExamTable() populateExamTable()}.
      * 
      * It uses Mockito in order to simulate a connection to DB .
      * 
@@ -39,9 +39,9 @@ public class TimetableUITest {
      * by calling timetableUI.populateExamTable();.
      * 
      * Final assertion (assertEquals) verifies if there are no exams
-     * registered in the new popopulated TimetableUI  instance.
+     * registered in the new populated TimetableUI  instance.
      * 
-     * @throws SQLException, if there exists an error in accesing the DB.
+     * @throws SQLException, if there exists an error in accessing the DB.
      */
     @Test
     public void testPopulateExamTable() throws SQLException {
@@ -77,9 +77,9 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#isRoomSuitable() isRoomSuitable()}
-     * Test if isRoomSuitable() returns true if the a room for course is
-     * suitable for a course.
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#isRoomSuitable() isRoomSuitable()}
+     * This method tests isRoomSuitable() and returns true when the course room is compatible
+     * with the course room type.
      */
     @Test
     public void testSuitableCourseRoom() {
@@ -92,9 +92,11 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#isRoomSuitable() isRoomSuitable()}
-     * Test if isRoomSuitable() returns true if the a room for laboratory is
-     * suitable for a laboratory.
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#isRoomSuitable() isRoomSuitable()}
+     * This method tests isRoomSuitable() and returns true when the course room is compatible
+     * with the course room type.
+     * Test if isRoomSuitable() returns true if the laboratory room is compatible
+     * with the laboratory room type.
      */
     @Test
     public void testSuitableLabRoom() {
@@ -108,8 +110,8 @@ public class TimetableUITest {
     
     /**
      * Method for testing {@link com.css.timetable.TimetableUI#isRoomSuitable() isRoomSuitable()}
-     * Test if isRoomSuitable() returns false if the a room for course is
-     * suitable for a laboratory.
+     * This method tests isRoomSuitable() and returns false when the course room is compatible
+     * with the laboratory room type.
      */
     @Test
     public void testUnsuitableLabRoom() {
@@ -122,7 +124,7 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#isCourseNotTotallyOverlapped() isCourseNotTotallyOverlapped()}
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#isCourseNotTotallyOverlapped() isCourseNotTotallyOverlapped()}.
      * 
      * The first assertEquals() verifies if tested method returns true if it is 
      * called using two instances of RegistrationTimetable that are not totally overlapping
@@ -187,10 +189,10 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#testIsCourseNotPartiallyOverlapped() testIsCourseNotPartiallyOverlapped()}
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#isCourseNotPartiallyOverlapped() isCourseNotPartiallyOverlapped()}.
      * First case: New instance has start time included in the time interval of the 
      * old course, so the desired output is false. 
-     * The test use the first assertEquals() to verify this scenerio.
+     * The test use the first assertEquals() to verify this scenario.
      * 
      * Second case: New instance end time overlaps time interval of old one.
      * The test use assertEquals() to verify if the returned value is false, the
@@ -201,7 +203,7 @@ public class TimetableUITest {
      * desired one. It is true because this is tested by isCourseNotTotallyOverlapped(),
      * not by this function.
      * 
-     * Fourth case: New instance not overlapes the old one. The code verifies if
+     * Fourth case: New instance not overlaps the old one. The code verifies if
      * the output is true (if the tested function shows that the instances are not 
      * partially overlapped).
      */
@@ -258,8 +260,8 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#hasValidDate(com.css.timetable.RegistrationTimetable) hasValidDate(registration)}
-     * It verifies three scenerios:
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#hasValidDate(com.css.timetable.RegistrationTimetable) hasValidDate(registration)}
+     * It verifies three scenarios:
      * First case: Test if Monday is considered as a valid day.
      * Second case: Test if date 32-01-2022 is considered as a non-valid date.
      * Third case: Test if date 16-05-2023 is considered as a valid date.
@@ -290,10 +292,10 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#sameCourseOnceAWeek(com.css.timetable.RegistrationTimetable, com.css.timetable.RegistrationTimetable)  sameCourseOnceAWeek(oldr, newr)}
-     * It verifies the following scenerio:
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#sameCourseOnceAWeek(com.css.timetable.RegistrationTimetable, com.css.timetable.RegistrationTimetable)  sameCourseOnceAWeek(oldr, newr)}
+     * It verifies the following scenario:
      * The instances oldOne and newOne proposes same course for two different
-     * groups that are in the same year. The desired output for this scenerio is
+     * groups that are in the same year. The desired output for this scenario is
      * false because it is required just a course once a week for a year.
      */
     @Test
@@ -327,9 +329,9 @@ public class TimetableUITest {
     }
 
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#isViableForInsert(com.css.timetable.RegistrationTimetable) isViableForInsert(reg)}
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#isViableForInsert(com.css.timetable.RegistrationTimetable) isViableForInsert(reg)}
      * Tests the logical constraints. It verifies the three cases:
-     * First case: New registartion that respects all logical conditions is viable for insert.
+     * First case: New registration that respects all logical conditions is viable for insert.
      * Second case: New registration with an invalid date format.
      * Third case: New registration with an invalid room.
      */
@@ -372,7 +374,6 @@ public class TimetableUITest {
         registrations[1] = reg2;
         registrations[2] = reg3;
 
-
         // Create a new valid registration
         RegistrationTimetable newReg1 = new RegistrationTimetable();
         newReg1.setStartHour(9);
@@ -411,10 +412,9 @@ public class TimetableUITest {
         newReg3.setTeacher("Teacher D");
         assertFalse(timetableUI.isViableForInsert(newReg3));
     }
-    private Connection conn;
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#populateGroupComboBox() populateGroupComboBox()}
+     * Tests the the functionality of {@link com.css.timetable.TimetableUI#populateGroupComboBox() populateGroupComboBox()}
      * Test if the group combo box is populated with the expected number of items.
      * @throws SQLException if there is an error in executing the SQL query.
      */
@@ -438,7 +438,7 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#populateDisciplineComboBox() populateDisciplineComboBox()}
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#populateDisciplineComboBox() populateDisciplineComboBox()}
      * Test if the discipline combo box is populated with the expected number of items.
      * @throws SQLException if there is an error in executing the SQL query.
      */
@@ -462,7 +462,7 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#populateClassComboBox() populateClassComboBox()}
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#populateClassComboBox() populateClassComboBox()}
      * Test if the class combo box is populated correctly.
      * @throws SQLException if there is an error in executing the SQL query.
      */
@@ -484,7 +484,7 @@ public class TimetableUITest {
     }
     
      /**
-     * Method for testing {@link com.css.timetable.TimetableUI#populateRoomComboBox() populateRoomComboBox()}
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#populateRoomComboBox() populateRoomComboBox()}
      * Test if the room combo box is populated correctly.
      * @throws SQLException if there is an error in executing the SQL query.
      */   
@@ -523,8 +523,8 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#populateTimeSlotStartComboBox() populateTimeSlotStartComboBox()}
-     * Test if the timeslot for starting time combo box is populated correctly.
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#populateTimeSlotStartComboBox() populateTimeSlotStartComboBox()}
+     * Test if the time slot for starting time combo box is populated correctly.
      * @throws SQLException if there is an error in executing the SQL query.
      */    
     @Test
@@ -549,8 +549,8 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#populateTimeSlotEndComboBox() populateTimeSlotEndComboBox()}
-     * Test if the timeslot for end time combo box is populated correctly.
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#populateTimeSlotEndComboBox() populateTimeSlotEndComboBox()}
+     * Test if the time slot for end time combo box is populated correctly.
      * @throws SQLException if there is an error in executing the SQL query.
      */  
     @Test
@@ -577,7 +577,7 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#populateYearComboBox(java.lang.String[]) populateYearComboBox(java.lang.String[])}
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#populateYearComboBox(java.lang.String[]) populateYearComboBox(java.lang.String[])}
      * Test if the year combo box is populated correctly.
      * @throws SQLException if there is an error in executing the SQL query.
      */  
@@ -596,7 +596,7 @@ public class TimetableUITest {
     }
     
     /**
-     * Method for testing {@link com.css.timetable.TimetableUI#populateDayComboBox(java.lang.String[]) populateDayComboBox(java.lang.String[])}
+     * Tests the functionality of {@link com.css.timetable.TimetableUI#populateDayComboBox(java.lang.String[]) populateDayComboBox(java.lang.String[])}
      * Test if the day combo box is populated correctly.
      * @throws SQLException if there is an error in executing the SQL query.
      */
