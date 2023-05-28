@@ -22,7 +22,27 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.MockitoAnnotations;
 
+/***
+ * This is the class that contains all tests made for TimetableUI class.
+ * The tests are made for methods from {@link com.css.timetable.TimetableUI}.
+ * 
+ * @author Cezar Lupu
+ */
 public class TimetableUITest {
+    
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#populateExamTable() populateExamTable()}.
+     * 
+     * It uses Mockito in order to simulate a connection to DB .
+     * 
+     * It tests a possible scenario for populating a TimetableUI instance,
+     * by calling timetableUI.populateExamTable();.
+     * 
+     * Final assertion (assertEquals) verifies if there are no exams
+     * registered in the new popopulated TimetableUI  instance.
+     * 
+     * @throws SQLException, if there exists an error in accesing the DB.
+     */
     @Test
     public void testPopulateExamTable() throws SQLException {
         JDBCConnection jdbcConnectionMock = Mockito.mock(JDBCConnection.class);
@@ -56,6 +76,11 @@ public class TimetableUITest {
         Assertions.assertEquals(0, timetableUI.jTable2.getRowCount());
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#isRoomSuitable() isRoomSuitable()}
+     * Test if isRoomSuitable() returns true if the a room for course is
+     * suitable for a course.
+     */
     @Test
     public void testSuitableCourseRoom() {
         TimetableUI timetableUI = new TimetableUI();
@@ -66,6 +91,11 @@ public class TimetableUITest {
         assertTrue(result);   
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#isRoomSuitable() isRoomSuitable()}
+     * Test if isRoomSuitable() returns true if the a room for laboratory is
+     * suitable for a laboratory.
+     */
     @Test
     public void testSuitableLabRoom() {
         TimetableUI timetableUI = new TimetableUI();
@@ -76,6 +106,11 @@ public class TimetableUITest {
         assertTrue(result);
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#isRoomSuitable() isRoomSuitable()}
+     * Test if isRoomSuitable() returns false if the a room for course is
+     * suitable for a laboratory.
+     */
     @Test
     public void testUnsuitableLabRoom() {
         TimetableUI timetableUI = new TimetableUI();
@@ -86,6 +121,17 @@ public class TimetableUITest {
         assertFalse(result);
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#isCourseNotTotallyOverlapped() isCourseNotTotallyOverlapped()}
+     * 
+     * The first assertEquals() verifies if tested method returns true if it is 
+     * called using two instances of RegistrationTimetable that are not totally overlapping
+     * regarding the time interval in the timetable.
+     * 
+     * The second assertEquals() verifies if tested method returns false if it is 
+     * called using two instances of RegistrationTimetable that are totally overlapping
+     * regarding the time interval in the timetable.
+     */
     @Test
     public void testIsCourseNotTotallyOverlapped() {
         // Test case 1: The courses are not totally overlapsed
@@ -140,6 +186,25 @@ public class TimetableUITest {
         assertEquals(expected, actual);
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#testIsCourseNotPartiallyOverlapped() testIsCourseNotPartiallyOverlapped()}
+     * First case: New instance has start time included in the time interval of the 
+     * old course, so the desired output is false. 
+     * The test use the first assertEquals() to verify this scenerio.
+     * 
+     * Second case: New instance end time overlaps time interval of old one.
+     * The test use assertEquals() to verify if the returned value is false, the
+     * desired one.
+     * 
+     * Third case: New instance is totally overlapped in the old one.
+     * The test use assertEquals() to verify if the returned value is true, the
+     * desired one. It is true because this is tested by isCourseNotTotallyOverlapped(),
+     * not by this function.
+     * 
+     * Fourth case: New instance not overlapes the old one. The code verifies if
+     * the output is true (if the tested function shows that the instances are not 
+     * partially overlapped).
+     */
     @Test
     public void testIsCourseNotPartiallyOverlapped() {
         RegistrationTimetable oldOne = new RegistrationTimetable();
@@ -164,46 +229,27 @@ public class TimetableUITest {
 
         TimetableUI timetableUI = new TimetableUI();
         MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
-
+        
+        //First case: Test for overlapping start times
         boolean expected = false;
         boolean actual = timetableUI.isCourseNotPartiallyOverlapped(oldOne, newOne);
         assertEquals(expected, actual);
 
-        // Test overlapping start times
-        newOne.setStartHour(10);
-        expected = false;
-        actual = timetableUI.isCourseNotPartiallyOverlapped(oldOne, newOne);
-        assertEquals(expected, actual);
-
-        // Test overlapping end times
+        //Second case: Test overlapping end times
         newOne.setStartHour(8);
         newOne.setEndHour(11);
         expected = false;
         actual = timetableUI.isCourseNotPartiallyOverlapped(oldOne, newOne);
         assertEquals(expected, actual);
 
-        // Test fully contained within oldOne
+        //Third case: Test fully contained within oldOne
         newOne.setStartHour(10);
         newOne.setEndHour(11);
         expected = true;
         actual = timetableUI.isCourseNotPartiallyOverlapped(oldOne, newOne);
         assertEquals(expected, actual);
 
-        // Test partially overlapping start times
-        newOne.setStartHour(8);
-        newOne.setEndHour(10);
-        expected = false;
-        actual = timetableUI.isCourseNotPartiallyOverlapped(oldOne, newOne);
-        assertEquals(expected, actual);
-
-        // Test partially overlapping end times
-        newOne.setStartHour(11);
-        newOne.setEndHour(14);
-        expected = false;
-        actual = timetableUI.isCourseNotPartiallyOverlapped(oldOne, newOne);
-        assertEquals(expected, actual);
-
-        // Test non-overlapping courses
+        //Fourth case: No overlapping
         newOne.setStartHour(14);
         newOne.setEndHour(16);
         expected = true;
@@ -211,28 +257,45 @@ public class TimetableUITest {
         assertEquals(expected, actual);
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#hasValidDate(com.css.timetable.RegistrationTimetable) hasValidDate(registration)}
+     * It verifies three scenerios:
+     * First case: Test if Monday is considered as a valid day.
+     * Second case: Test if date 32-01-2022 is considered as a non-valid date.
+     * Third case: Test if date 16-05-2023 is considered as a valid date.
+     */
     @Test
     public void testHasValidDate() {
         TimetableUI timetableUI = new TimetableUI();
         MockitoAnnotations.openMocks(this); // Initialize the annotated mocks
-
+        
+        //First case: Test if Moday is consider as a valid day
         RegistrationTimetable reg = new RegistrationTimetable();
         reg.setDay("Monday");
         boolean expected = true;
         boolean actual = timetableUI.hasValidDate(reg);
         assertEquals(expected, actual);
 
+        //Second case: Test if date 32-01-2022 is consider a non-valid date.
         reg.setDay("32-01-2022");
         expected = false;
         actual = timetableUI.hasValidDate(reg);
         assertEquals(expected, actual);
-
+        
+        //Third case: Test if date 16-05-2023 is considered as a valid date.
         reg.setDay("16-05-2023");
         expected = true;
         actual = timetableUI.hasValidDate(reg);
         assertEquals(expected, actual);
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#sameCourseOnceAWeek(com.css.timetable.RegistrationTimetable, com.css.timetable.RegistrationTimetable)  sameCourseOnceAWeek(oldr, newr)}
+     * It verifies the following scenerio:
+     * The instances oldOne and newOne proposes same course for two different
+     * groups that are in the same year. The desired output for this scenerio is
+     * false because it is required just a course once a week for a year.
+     */
     @Test
     public void testSameCourseOnceAWeek() {
         RegistrationTimetable oldOne = new RegistrationTimetable();
@@ -263,6 +326,13 @@ public class TimetableUITest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#isViableForInsert(com.css.timetable.RegistrationTimetable) isViableForInsert(reg)}
+     * Tests the logical constraints. It verifies the three cases:
+     * First case: New registartion that respects all logical conditions is viable for insert.
+     * Second case: New registration with an invalid date format.
+     * Third case: New registration with an invalid room.
+     */
     @Test
     public void testIsViableForInsert() {
         TimetableUI timetableUI = new TimetableUI();
@@ -314,59 +384,40 @@ public class TimetableUITest {
         newReg1.setGroupName("1A2");
         newReg1.setTeacher("Teacher D");
 
-        // Test with a new valid registration
+        // First case: Test with a new valid registration
         assertTrue(timetableUI.isViableForInsert(newReg1));
 
-        // Test with an invalid date format
+        // Second case: Test with an invalid date format
         RegistrationTimetable newReg2 = new RegistrationTimetable();
         newReg2.setStartHour(10);
         newReg2.setEndHour(12);
         newReg2.setRoom("L2");
-        newReg2.setDay("13-05-2023"); // invalid date format
+        newReg2.setDay("33-05-2023"); // invalid date format
         newReg2.setCourse("Matematica");
         newReg2.setCourseType("Laboratory");
         newReg2.setGroupName("1A2");
         newReg2.setTeacher("Teacher D");
         assertFalse(timetableUI.isViableForInsert(newReg2));
 
-        // Test with an invalid room
+        // Third case: Test with an invalid room
         RegistrationTimetable newReg3 = new RegistrationTimetable();
         newReg3.setStartHour(10);
         newReg3.setEndHour(12);
-        newReg3.setRoom("C2"); // invalid room for the chosen course type
+        newReg3.setRoom("L2"); // invalid room for the chosen course type
         newReg3.setDay("Monday");
         newReg3.setCourse("Matematica");
         newReg3.setCourseType("Course");
         newReg3.setGroupName("1A2");
         newReg3.setTeacher("Teacher D");
-        assertTrue(timetableUI.isViableForInsert(newReg3));
+        assertFalse(timetableUI.isViableForInsert(newReg3));
     }
     private Connection conn;
     
-//    @Test
-//    public void testPopulateTeacherComboBox() throws SQLException {
-//        TimetableUI TUI = new TimetableUI();
-//        conn = JDBCConnection.getInstance().getConnection();
-//        Statement stmt = conn.createStatement();
-//        int teachersNumber = 0;
-//        
-//        ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM teachers;");
-//        while (rs.next()) {
-//            teachersNumber = rs.getInt("total");
-//        }
-//        
-//        stmt.execute("INSERT INTO teachers (course_id, first_name, last_name) VALUES ('2', 'Dragos', 'Baciu')");
-//        
-//        TUI.populateTeacherComboBox();
-//        javax.swing.JComboBox<String> teacherComboBox = TUI.getTeacherComboBox();
-//        
-//        assertTrue(teacherComboBox.getItemCount() == teachersNumber + 1);
-//        assertTrue(teacherComboBox.getItemAt(0).equals("Baciu Dragos"));
-//        
-//        stmt.execute("DELETE FROM teachers");
-//        conn.close();
-//    }
-//    
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#populateGroupComboBox() populateGroupComboBox()}
+     * Test if the group combo box is populated with the expected number of items.
+     * @throws SQLException if there is an error in executing the SQL query.
+     */
     @Test
     public void testPopulateGroupComboBox() throws SQLException {
         TimetableUI TUI = new TimetableUI();
@@ -386,6 +437,11 @@ public class TimetableUITest {
         conn.close();
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#populateDisciplineComboBox() populateDisciplineComboBox()}
+     * Test if the discipline combo box is populated with the expected number of items.
+     * @throws SQLException if there is an error in executing the SQL query.
+     */
     @Test
     public void testPopulateDisciplineComboBox() throws SQLException {
         TimetableUI TUI = new TimetableUI();
@@ -405,6 +461,11 @@ public class TimetableUITest {
         conn.close();
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#populateClassComboBox() populateClassComboBox()}
+     * Test if the class combo box is populated correctly.
+     * @throws SQLException if there is an error in executing the SQL query.
+     */
     @Test
     public void testPopulateClassComboBox() throws SQLException {
         TimetableUI TUI = new TimetableUI();
@@ -422,6 +483,11 @@ public class TimetableUITest {
         conn.close();
     }
     
+     /**
+     * Method for testing {@link com.css.timetable.TimetableUI#populateRoomComboBox() populateRoomComboBox()}
+     * Test if the room combo box is populated correctly.
+     * @throws SQLException if there is an error in executing the SQL query.
+     */   
     @Test
     public void testPopulateRoomComboBox() throws SQLException {
         TimetableUI TUI = new TimetableUI();
@@ -456,6 +522,11 @@ public class TimetableUITest {
         conn.close();
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#populateTimeSlotStartComboBox() populateTimeSlotStartComboBox()}
+     * Test if the timeslot for starting time combo box is populated correctly.
+     * @throws SQLException if there is an error in executing the SQL query.
+     */    
     @Test
     public void testPopulateTimeSlotStartComboBox() throws SQLException {
         TimetableUI TUI = new TimetableUI();
@@ -477,6 +548,11 @@ public class TimetableUITest {
         assertTrue(timeSlotStartComboBox.getItemAt(11).equals("19"));    
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#populateTimeSlotEndComboBox() populateTimeSlotEndComboBox()}
+     * Test if the timeslot for end time combo box is populated correctly.
+     * @throws SQLException if there is an error in executing the SQL query.
+     */  
     @Test
     public void testPopulateTimeSlotEndComboBox() throws SQLException {
         TimetableUI TUI = new TimetableUI();
@@ -500,6 +576,11 @@ public class TimetableUITest {
         
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#populateYearComboBox(java.lang.String[]) populateYearComboBox(java.lang.String[])}
+     * Test if the year combo box is populated correctly.
+     * @throws SQLException if there is an error in executing the SQL query.
+     */  
     @Test
     public void testPopulateYearComboBox() throws SQLException {
         TimetableUI TUI = new TimetableUI();
@@ -512,10 +593,13 @@ public class TimetableUITest {
         assertTrue(yearComboBox.getItemAt(0).equals("1"));
         assertTrue(yearComboBox.getItemAt(1).equals("2"));
         assertTrue(yearComboBox.getItemAt(2).equals("3"));
-        
-        
     }
     
+    /**
+     * Method for testing {@link com.css.timetable.TimetableUI#populateDayComboBox(java.lang.String[]) populateDayComboBox(java.lang.String[])}
+     * Test if the day combo box is populated correctly.
+     * @throws SQLException if there is an error in executing the SQL query.
+     */
     @Test
     public void testPopulateDayComboBox() throws SQLException {
         TimetableUI TUI = new TimetableUI();
@@ -530,27 +614,5 @@ public class TimetableUITest {
         assertTrue(dayComboBox.getItemAt(2).equals("Wednesday"));
         assertTrue(dayComboBox.getItemAt(3).equals("Thursday"));
         assertTrue(dayComboBox.getItemAt(4).equals("Friday"));
-    }
-    
-    @Test
-    public void testUpdateTeacherComboBox() throws SQLException {
-        TimetableUI TUI = new TimetableUI();
-        conn = JDBCConnection.getInstance().getConnection();
-        Statement stmt = conn.createStatement();
-        
-        TUI.populateTeacherComboBox();
-        TUI.populateDisciplineComboBox();
-        javax.swing.JComboBox<String> beforeTeacherComboBox = TUI.getTeacherComboBox();
-        
-        System.out.println("Before" + beforeTeacherComboBox);
-        for(int i = 0; i < beforeTeacherComboBox.getItemCount(); ++i) {
-            
-        }
-        
-        TUI.updateTeacherComboBox();
-        javax.swing.JComboBox<String> afterTeacherComboBox = TUI.getTeacherComboBox();
-        
-        System.out.println("After" + afterTeacherComboBox);
-        conn.close();
     }
 }

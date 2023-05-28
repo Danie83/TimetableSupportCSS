@@ -28,7 +28,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * The The main user interface that extends JFrame. It provides
+ * The main user interface that extends JFrame. It provides
  * functionalities for adding new timetable items and exam items,
  * validating them at the same time.
  */
