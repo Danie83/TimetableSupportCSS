@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class used to export the timetable and exam table for each group.
+ */
 public class ExportTimetable 
 {
     
