@@ -15,6 +15,10 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class used to initialize the tables in the database with initial data.
+ * It makes use of the configuration file properties to generate the necessary data.
+ */
 public class DatabaseSetup 
 {
     /** Logger of the current class. */
