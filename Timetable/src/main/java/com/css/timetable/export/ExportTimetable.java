@@ -22,7 +22,16 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ExportTimetable {
+public class ExportTimetable 
+{
+    
+    /**
+     * Method that generates all HTML pages for timetable and exam entries that 
+     * belong to all existent groups. If a group has no timetable and exam entries,
+     * it is logged and skipped. The timetable entries are sorted by the day of the
+     * entry. Finally, the HTML page is saved in the resources folder and it's
+     * name is represented by the group name.
+     */
     public static void createHTML()
     {
         String[] headers = {"From-To", "Group", "Discipline", "Type", "Teacher", "Day", "Room"};
@@ -67,7 +76,8 @@ public class ExportTimetable {
                     row[5] = prs.getString("day");
                     row[6] = prs.getString("room");
                     
-                    if(row[3].split(" ").length > 1 && row[3].split(" ")[1].equals("Exam")){
+                    if(row[3].split(" ").length > 1 && row[3].split(" ")[1].equals("Exam"))
+                    {
                         examTableRows.add(row);
                     }
                     else{
@@ -81,11 +91,12 @@ public class ExportTimetable {
                     continue;
                 }
                 
-                assert !timetableRows.isEmpty() || !examTableRows.isEmpty() : "No timetable or exam data for group " + group;
+                assert !timetableRows.isEmpty() || !examTableRows.isEmpty() : "Timetable or exam data available for group " + group;
                 
                 StringBuilder html = new StringBuilder();
                 
-                if(!timetableRows.isEmpty()){
+                if(!timetableRows.isEmpty())
+                {
                     html.append("<table style=\"border-collapse: collapse; width: 100%;\">");
                     html.append("<thead style=\"background-color: #9d9af5;\">");
                     html.append("<tr>");
@@ -96,9 +107,11 @@ public class ExportTimetable {
                     html.append("</tr></thead>");
 
                     html.append("<tbody id=\"timetable\">");
-                    for (String[] row : timetableRows) {
+                    for (String[] row : timetableRows) 
+                    {
                         html.append("<tr>");
-                        for (String cell : row) {
+                        for (String cell : row) 
+                        {
                             html.append("<td style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">").append(cell).append("</td>");
                         }
                         html.append("</tr>");
@@ -109,7 +122,8 @@ public class ExportTimetable {
                     html.append("<br>");
                 }
                 
-                if(!examTableRows.isEmpty()){
+                if(!examTableRows.isEmpty())
+                {
                     html.append("<table id=\"examtable\" style=\"border-collapse: collapse; width: 100%;\">");
                     html.append("<thead style=\"background-color: #fafa6e;\">");
                     html.append("<tr>");
@@ -120,11 +134,13 @@ public class ExportTimetable {
                     html.append("</tr></thead>");
 
                     html.append("<tbody>");
-                    for (String[] row : examTableRows) {
+                    for (String[] row : examTableRows) 
+                    {
                         // start and end hour are 2 separate columns, and the id => row.length - 2
                         assert row.length - 2 == headers.length : "Invalid number of columns in examTableRows";
                         html.append("<tr>");
-                        for (String cell : row) {
+                        for (String cell : row) 
+                        {
                             html.append("<td style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">").append(cell).append("</td>");
                         }
                         html.append("</tr>");
@@ -142,7 +158,9 @@ public class ExportTimetable {
                     {
                         file.createNewFile();
                         url = file.toURI().toURL();
-                    } catch (IOException ex) {
+                    } 
+                    catch (IOException ex) 
+                    {
                         Logger.getLogger(ExportTimetable.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -153,10 +171,11 @@ public class ExportTimetable {
                     FileWriter fileWriter = new FileWriter(path.toFile());
                     fileWriter.write(html.toString());
                     fileWriter.close();
-                } catch (URISyntaxException | IOException ex) {
+                } 
+                catch (URISyntaxException | IOException ex) 
+                {
                     Logger.getLogger(ExportTimetable.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
             }
         } 
         catch (SQLException ex) 

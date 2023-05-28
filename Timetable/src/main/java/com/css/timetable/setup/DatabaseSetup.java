@@ -17,10 +17,22 @@ import java.util.logging.Logger;
 
 public class DatabaseSetup 
 {
+    /** Logger of the current class. */
     public static Logger LOG = Logger.getLogger(DatabaseSetup.class.getName());
     
+    /** An instance of the ConfigReader class used to read the configuration properties of the project. */
     public static ConfigReader config = ConfigReader.getInstance();
     
+    /**
+     * Method that does an initial setup of the database based on the 
+     * properties belonging to the current project properties configuration.
+     * The setup can be toggled from the configuration property: setup.initiate.
+     * The method populates the database with groups based on the number of 
+     * years, number of half years and the available group count for each half year.
+     * The method also populates the rooms, room types, and disciplines available.
+     * NOTE: Teacher have to be added manually in the database in order to allow multiple 
+     * teachers to hold the same course.
+     */
     public static void setup()
     {
         String check = config.getProperty("setup.initiate");
@@ -151,7 +163,8 @@ public class DatabaseSetup
                 {
                     String roomName = new StringBuilder().append(currentRoomType.toCharArray()[0]).append(i).toString();
                     String roomSql = "INSERT INTO rooms VALUES(?, ?);";
-                    try (PreparedStatement ptmt = conn.prepareStatement(roomSql)) {
+                    try (PreparedStatement ptmt = conn.prepareStatement(roomSql)) 
+                    {
                         ptmt.setString(1, roomName);
                         ptmt.setString(2, currentRoomType);
                         ptmt.executeUpdate();
@@ -178,7 +191,8 @@ public class DatabaseSetup
                 
                 String roomName = new StringBuilder().append(currentRoomType.toCharArray()[0]).append(++currentPosition).toString();
                 String roomSql = "INSERT INTO rooms VALUES(?, ?);";
-                try (PreparedStatement ptmt = conn.prepareStatement(roomSql)) {
+                try (PreparedStatement ptmt = conn.prepareStatement(roomSql)) 
+                {
                     ptmt.setString(1, roomName);
                     ptmt.setString(2, currentRoomType);
                     ptmt.executeUpdate();
@@ -192,7 +206,8 @@ public class DatabaseSetup
                 // 0 is the name, 1 is the year
                 String[] vals = discipline.split("-");
                 String disciplineSql = "INSERT INTO discipline (name, year) VALUES(?, ?);";
-                try (PreparedStatement ptmt = conn.prepareStatement(disciplineSql)) {
+                try (PreparedStatement ptmt = conn.prepareStatement(disciplineSql)) 
+                {
                     ptmt.setString(1, vals[0]);
                     ptmt.setInt(2, Integer.parseInt(vals[1]));
                     ptmt.executeUpdate();
