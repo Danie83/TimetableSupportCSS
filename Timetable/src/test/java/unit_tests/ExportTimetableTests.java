@@ -12,7 +12,6 @@ import java.sql.Statement;
 import com.css.timetable.export.ExportTimetable;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -31,7 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ExportTimetableTests {
 
     private Connection conn;
-
+    
+    /**
+     * This function is used to clean up the state of the database after each test, 
+     * ensuring that the "groups" and "timetable" tables are empty before running the next test.
+     * @throws SQLException 
+     */
     @AfterEach
     public void cleanUp() throws SQLException {
         conn = JDBCConnection.getInstance().getConnection();
@@ -42,7 +46,13 @@ public class ExportTimetableTests {
 
         conn.close();
     }
-
+    
+    
+    /**
+     * This test method is checking whether the createHTML() method produces a file named "1A1.html" in the "resources" directory. 
+     * It verifies that the URL of the file is not found, indicating that the table has no information and the file was not generated successfully.
+     * @throws SQLException 
+     */
     @Test
     public void testTableNoInformation() throws SQLException {
         ExportTimetable.createHTML();
@@ -50,7 +60,11 @@ public class ExportTimetableTests {
         URL url = ClassLoader.getSystemResource("resources/1A1.html");
         assertFalse(url != null);
     }
-
+    
+    /**
+     * this test method validates the generation of an HTML table for timetable and verifies the integrity of the table row's contents.
+     * @throws SQLException 
+     */
     @Test
     public void testTableWithInformation() throws SQLException {
         conn = JDBCConnection.getInstance().getConnection();
@@ -101,6 +115,10 @@ public class ExportTimetableTests {
         conn.close();
     }
 
+    /**
+     * this test method validates the generation of an HTML table for examtable and verifies the integrity of the table row's contents.
+     * @throws SQLException 
+     */
     @Test
     public void testTableWithInformationExam() throws SQLException {
         conn = JDBCConnection.getInstance().getConnection();
@@ -143,7 +161,11 @@ public class ExportTimetableTests {
         stmt.execute("DELETE FROM timetable");
         conn.close();
     }
-
+    
+    /**
+     * this test method validates the generation of an HTML table for timetable and examtable then verifies the integrity of the table row's contents.
+     * @throws SQLException 
+     */
     @Test
     public void testTableWithInformationWholeTable() throws SQLException {
         conn = JDBCConnection.getInstance().getConnection();
@@ -194,7 +216,20 @@ public class ExportTimetableTests {
         stmt.execute("DELETE FROM timetable");
         conn.close();
     }
-
+    
+    /**
+     * This method is used to check whether the values in the toBeChecked list match 
+     * specific parameter values, ensuring the integrity of the rows in a data structure. 
+     * @param toBeChecked
+     * @param hours
+     * @param group_name
+     * @param course
+     * @param course_type
+     * @param teacher
+     * @param day
+     * @param room
+     * @return 
+     */
     public static boolean checkIntegrityRows(ArrayList<String> toBeChecked, String hours, String group_name, String course, String course_type, String teacher, String day, String room) {
         return toBeChecked.get(0).equals(hours) &&
                 toBeChecked.get(1).equals(group_name) &&
